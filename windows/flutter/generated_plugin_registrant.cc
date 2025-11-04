@@ -6,15 +6,12 @@
 
 #include "generated_plugin_registrant.h"
 
-#include <charset_converter/charset_converter_plugin.h>
 #include <flutter_inappwebview_windows/flutter_inappwebview_windows_plugin_c_api.h>
 #include <flutter_thermal_printer/flutter_thermal_printer_plugin_c_api.h>
 #include <printing/printing_plugin.h>
 #include <universal_ble/universal_ble_plugin_c_api.h>
 
 void RegisterPlugins(flutter::PluginRegistry* registry) {
-  CharsetConverterPluginRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("CharsetConverterPlugin"));
   FlutterInappwebviewWindowsPluginCApiRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("FlutterInappwebviewWindowsPluginCApi"));
   FlutterThermalPrinterPluginCApiRegisterWithRegistrar(

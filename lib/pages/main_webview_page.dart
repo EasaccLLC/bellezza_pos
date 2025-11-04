@@ -11,9 +11,9 @@ class MainWebViewPage extends StatefulWidget {
 
   @override
   State<MainWebViewPage> createState() => _MainWebViewPageState();
-  }
+}
 
-  class _MainWebViewPageState extends State<MainWebViewPage> {
+class _MainWebViewPageState extends State<MainWebViewPage> {
   InAppWebViewController? controller;
   Map<String, dynamic>? receivedData;
   double _progress = 0;
@@ -21,15 +21,15 @@ class MainWebViewPage extends StatefulWidget {
   bool _hasError = false;
 
   String get _baseUrl {
-  final url = SharedPreferencesService.getBaseUrl();
-  print("🌐 استخدام الـ URL: $url");
-  return url;
+    final url = SharedPreferencesService.getBaseUrl();
+    print("🌐 استخدام الـ URL: $url");
+    return url;
   }
 
   @override
   void initState() {
-  super.initState();
-  print("🚀 بدء MainWebViewPage مع الـ URL: $_baseUrl");
+    super.initState();
+    print("🚀 بدء MainWebViewPage مع الـ URL: $_baseUrl");
   }
 
   @override
