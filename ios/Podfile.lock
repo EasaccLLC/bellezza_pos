@@ -1,0 +1,85 @@
+PODS:
+  - charset_converter (0.0.1):
+    - Flutter
+  - Flutter (1.0.0)
+  - flutter_inappwebview_ios (0.0.1):
+    - Flutter
+    - flutter_inappwebview_ios/Core (= 0.0.1)
+    - OrderedSet (~> 6.0.3)
+  - flutter_inappwebview_ios/Core (0.0.1):
+    - Flutter
+    - OrderedSet (~> 6.0.3)
+  - flutter_native_splash (2.4.3):
+    - Flutter
+  - flutter_thermal_printer (0.0.1):
+    - Flutter
+  - OrderedSet (6.0.3)
+  - path_provider_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
+  - printing (1.0.0):
+    - Flutter
+  - shared_preferences_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
+  - sqflite_darwin (0.0.4):
+    - Flutter
+    - FlutterMacOS
+  - universal_ble (0.0.1):
+    - Flutter
+    - FlutterMacOS
+
+DEPENDENCIES:
+  - charset_converter (from `.symlinks/plugins/charset_converter/ios`)
+  - Flutter (from `Flutter`)
+  - flutter_inappwebview_ios (from `.symlinks/plugins/flutter_inappwebview_ios/ios`)
+  - flutter_native_splash (from `.symlinks/plugins/flutter_native_splash/ios`)
+  - flutter_thermal_printer (from `.symlinks/plugins/flutter_thermal_printer/ios`)
+  - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
+  - printing (from `.symlinks/plugins/printing/ios`)
+  - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
+  - sqflite_darwin (from `.symlinks/plugins/sqflite_darwin/darwin`)
+  - universal_ble (from `.symlinks/plugins/universal_ble/darwin`)
+
+SPEC REPOS:
+  trunk:
+    - OrderedSet
+
+EXTERNAL SOURCES:
+  charset_converter:
+    :path: ".symlinks/plugins/charset_converter/ios"
+  Flutter:
+    :path: Flutter
+  flutter_inappwebview_ios:
+    :path: ".symlinks/plugins/flutter_inappwebview_ios/ios"
+  flutter_native_splash:
+    :path: ".symlinks/plugins/flutter_native_splash/ios"
+  flutter_thermal_printer:
+    :path: ".symlinks/plugins/flutter_thermal_printer/ios"
+  path_provider_foundation:
+    :path: ".symlinks/plugins/path_provider_foundation/darwin"
+  printing:
+    :path: ".symlinks/plugins/printing/ios"
+  shared_preferences_foundation:
+    :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
+  sqflite_darwin:
+    :path: ".symlinks/plugins/sqflite_darwin/darwin"
+  universal_ble:
+    :path: ".symlinks/plugins/universal_ble/darwin"
+
+SPEC CHECKSUMS:
+  charset_converter: 215c7b04932ec2b9ba43be96a9bc34afed3e5322
+  Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
+  flutter_inappwebview_ios: 6f63631e2c62a7c350263b13fa5427aedefe81d4
+  flutter_native_splash: df59bb2e1421aa0282cb2e95618af4dcb0c56c29
+  flutter_thermal_printer: b8d6327b4d50d4d810a7568188692d0db882c3e6
+  OrderedSet: e539b66b644ff081c73a262d24ad552a69be3a94
+  path_provider_foundation: 0b743cbb62d8e47eab856f09262bb8c1ddcfe6ba
+  printing: 233e1b73bd1f4a05615548e9b5a324c98588640b
+  shared_preferences_foundation: 5086985c1d43c5ba4d5e69a4e8083a389e2909e6
+  sqflite_darwin: 5a7236e3b501866c1c9befc6771dfd73ffb8702d
+  universal_ble: cf52a7b3fd2e7c14d6d7262e9fdadb72ab6b88a6
+
+PODFILE CHECKSUM: b491fb6592df888cf7ba8f648eceedf2bbb09cca
+
+COCOAPODS: 1.16.2
