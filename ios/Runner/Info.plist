@@ -64,6 +64,12 @@
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Required for connecting to thermal printers.</string>
 
+   <key>NSBluetoothAlwaysUsageDescription</key>
+   <string>The app requires Bluetooth access to connect with nearby devices.</string>
+   <key>NSBluetoothPeripheralUsageDescription</key>
+   <string>The app needs Bluetooth access to communicate with external devices.</string>
+
+
 	<!-- Camera and Photos -->
 	<key>NSCameraUsageDescription</key>
 	<string>Required for receipt printing functionality.</string>
