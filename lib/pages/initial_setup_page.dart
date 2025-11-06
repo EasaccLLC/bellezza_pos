@@ -27,7 +27,6 @@ class _InitialSetupPageState extends State<InitialSetupPage> {
 
   void _checkExistingConfiguration() async {
     await Future.delayed(const Duration(milliseconds: 800));
-
     final currentUrl = SharedPreferencesService.getBaseUrl();
     final bool isConfigured = SharedPreferencesService.isConfigured;
 
@@ -38,7 +37,6 @@ class _InitialSetupPageState extends State<InitialSetupPage> {
       });
     }
 
-    // الانتقال التلقائي إذا كان التطبيق مهيأ
     if (isConfigured && currentUrl != AppConfig.defaultBaseUrl) {
       await Future.delayed(const Duration(milliseconds: 500));
       if (mounted) {
@@ -52,30 +50,20 @@ class _InitialSetupPageState extends State<InitialSetupPage> {
 
   Future<void> _saveBaseUrl() async {
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
+      setState(() => _isLoading = true);
 
       try {
         final fullUrl = _selectedProtocol + _urlController.text.trim();
         await SharedPreferencesService.setBaseUrl(fullUrl);
 
         if (mounted) {
-          // إظهار رسالة نجاح قبل الانتقال
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Row(
-                children: [
-                  Icon(Icons.check_circle, color: Colors.white, size: 20),
-                  SizedBox(width: 8),
-                  Text('تم حفظ الإعدادات بنجاح'),
-                ],
-              ),
+            const SnackBar(
+              content: Text('✅ تم حفظ الإعدادات بنجاح'),
               backgroundColor: Colors.green,
               duration: Duration(seconds: 1),
             ),
           );
-
           await Future.delayed(const Duration(milliseconds: 1200));
           Navigator.pushReplacement(
             context,
@@ -83,16 +71,13 @@ class _InitialSetupPageState extends State<InitialSetupPage> {
           );
         }
       } catch (e) {
-        setState(() {
-          _isLoading = false;
-        });
-        _showErrorSnackbar('خطأ في حفظ الإعدادات: $e');
+        setState(() => _isLoading = false);
+        _showErrorSnackbar('حدث خطأ أثناء الحفظ: $e');
       }
     }
   }
 
   void _enterAsGuest() {
-    // استخدام الإعدادات الافتراضية للدخول كزائر
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (_) => const MainWebViewPage()),
@@ -101,418 +86,163 @@ class _InitialSetupPageState extends State<InitialSetupPage> {
 
   void _showErrorSnackbar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Icon(Icons.error_outline, color: Colors.white, size: 20),
-            SizedBox(width: 8),
-            Expanded(child: Text(message)),
-          ],
-        ),
-        backgroundColor: Colors.red,
-        duration: Duration(seconds: 3),
-      ),
-    );
-  }
-
-  void _showInfoDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Row(
-          children: [
-            Icon(Icons.help_outline, color: Colors.blue),
-            SizedBox(width: 8),
-            Text('معلومات الإعداد'),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'أدخل عنوان الخادم الخاص بنظام Bellezza:',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 12),
-            _buildInfoItem('مثال:', 'mydomain.com'),
-            _buildInfoItem('أو:', '192.168.1.100'),
-            _buildInfoItem('أو:', 'server.bellezza.com'),
-            SizedBox(height: 16),
-            Text(
-              'تأكد من:',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            _buildInfoItem('•', 'اتصال الإنترنت نشط'),
-            _buildInfoItem('•', 'الخادم يعمل بشكل صحيح'),
-            _buildInfoItem('•', 'البورتات مفتوحة (80, 443)'),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('حسناً'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInfoItem(String title, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title, style: TextStyle(fontWeight: FontWeight.w500)),
-          SizedBox(width: 8),
-          Expanded(child: Text(value, style: TextStyle(color: Colors.grey[700]))),
-        ],
-      ),
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     if (_checkingConfig) {
-      return Scaffold(
+      return const Scaffold(
         backgroundColor: Colors.white,
         body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.blue.shade700),
-                strokeWidth: 3,
-              ),
-              const SizedBox(height: 24),
-              Text(
-                'جاري التحقق من الإعدادات...',
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.grey[700],
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'يرجى الانتظار',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[500],
-                ),
-              ),
-            ],
-          ),
+          child: CircularProgressIndicator(color: Colors.orange),
         ),
       );
     }
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Center(
           child: Container(
-            constraints: const BoxConstraints(maxWidth: 500),
-            margin: const EdgeInsets.all(20),
-            child: Card(
-              elevation: 8,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(32.0),
-                child: SingleChildScrollView(
+            constraints: const BoxConstraints(maxWidth: 400),
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Logo
+                Container(
+                  width: 90,
+                  height: 90,
+                  decoration: BoxDecoration(
+                    color: Colors.orange.shade100,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.settings, color: Colors.orange, size: 45),
+                ),
+                const SizedBox(height: 24),
+
+                // Title
+                const Text(
+                  "تهيئة النظام",
+                  style: TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.orange,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  "أدخل عنوان الخادم لبدء استخدام النظام",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.grey, fontSize: 14),
+                ),
+                const SizedBox(height: 30),
+
+                // Form
+                Form(
+                  key: _formKey,
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // Header Section
-                      Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [Colors.blue.shade600, Colors.blue.shade800],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.blue.withOpacity(0.3),
-                              blurRadius: 10,
-                              spreadRadius: 2,
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 90,
+                            child: DropdownButtonFormField<String>(
+                              value: _selectedProtocol,
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(),
+                                isDense: true,
+                                contentPadding:
+                                EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                              ),
+                              items: _protocols.map((e) {
+                                return DropdownMenuItem(value: e, child: Text(e));
+                              }).toList(),
+                              onChanged: (v) => setState(() => _selectedProtocol = v!),
                             ),
-                          ],
-                        ),
-                        child: const Icon(
-                          Icons.dashboard,
-                          size: 40,
-                          color: Colors.white,
-                        ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: TextFormField(
+                              controller: _urlController,
+                              decoration: const InputDecoration(
+                                hintText: "اسم النطاق أو IP",
+                                border: OutlineInputBorder(),
+                                isDense: true,
+                              ),
+                              validator: (v) {
+                                if (v == null || v.isEmpty) {
+                                  return "يرجى إدخال العنوان";
+                                }
+                                if (v.contains(" ")) {
+                                  return "العنوان لا يحتوي على مسافات";
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 24),
-                      Text(
-                        'تهيئة التطبيق',
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue.shade800,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'أدخل عنوان الخادم لبدء استخدام النظام',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey[600],
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 32),
 
-                      // Form Section
-                      Form(
-                        key: _formKey,
-                        child: Column(
-                          children: [
-                            // Protocol and URL Input
-                            Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey.shade300),
-                                borderRadius: BorderRadius.circular(12),
-                                color: Colors.white,
-                              ),
-                              child: Row(
-                                children: [
-                                  // Protocol Dropdown
-                                  Container(
-                                    width: 100,
-                                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey[50],
-                                      borderRadius: const BorderRadius.horizontal(
-                                        left: Radius.circular(12),
-                                      ),
-                                    ),
-                                    child: DropdownButtonHideUnderline(
-                                      child: DropdownButton<String>(
-                                        value: _selectedProtocol,
-                                        isExpanded: true,
-                                        icon: Icon(Icons.arrow_drop_down, color: Colors.grey[600]),
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.grey[800],
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                        items: _protocols.map((protocol) {
-                                          return DropdownMenuItem<String>(
-                                            value: protocol,
-                                            child: Text(protocol),
-                                          );
-                                        }).toList(),
-                                        onChanged: (value) {
-                                          setState(() {
-                                            _selectedProtocol = value!;
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    width: 1,
-                                    height: 40,
-                                    color: Colors.grey.shade300,
-                                  ),
-                                  // URL Input
-                                  Expanded(
-                                    child: TextFormField(
-                                      controller: _urlController,
-                                      decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-                                        hintText: 'اسم النطاق أو عنوان IP',
-                                        hintStyle: TextStyle(color: Colors.grey[500]),
-                                        errorStyle: TextStyle(color: Colors.red.shade600),
-                                      ),
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'يرجى إدخال عنوان الخادم';
-                                        }
-                                        if (value.contains(' ')) {
-                                          return 'العنوان لا يمكن أن يحتوي على مسافات';
-                                        }
-                                        if (value.contains('/')) {
-                                          return 'أدخل العنوان فقط بدون مسارات إضافية';
-                                        }
-                                        return null;
-                                      },
-                                    ),
-                                  ),
-                                  // Help Icon
-                                  IconButton(
-                                    icon: Icon(Icons.help_outline, color: Colors.grey[500], size: 20),
-                                    onPressed: _showInfoDialog,
-                                    tooltip: 'معلومات المساعدة',
-                                  ),
-                                ],
-                              ),
+                      // Save button
+                      SizedBox(
+                        width: double.infinity,
+                        height: 48,
+                        child: ElevatedButton.icon(
+                          icon: _isLoading
+                              ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
                             ),
-                            const SizedBox(height: 8),
-                            // Help Text
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: Text(
-                                'أدخل اسم النطاق أو عنوان IP بدون http://',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey[500],
-                                ),
-                              ),
+                          )
+                              : const Icon(Icons.check_circle_outline),
+                          label: Text(
+                            _isLoading ? "جاري الحفظ..." : "حفظ والدخول",
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.orange,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            const SizedBox(height: 32),
-
-                            // Save Button
-                            if (_isLoading)
-                              Container(
-                                width: double.infinity,
-                                height: 50,
-                                decoration: BoxDecoration(
-                                  color: Colors.blue.shade100,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Center(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      SizedBox(
-                                        width: 20,
-                                        height: 20,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          valueColor: AlwaysStoppedAnimation<Color>(Colors.blue.shade700),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 12),
-                                      Text(
-                                        'جاري الحفظ...',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.blue.shade700,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              )
-                            else
-                              SizedBox(
-                                width: double.infinity,
-                                height: 50,
-                                child: ElevatedButton(
-                                  onPressed: _saveBaseUrl,
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blue.shade700,
-                                    foregroundColor: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    elevation: 2,
-                                    shadowColor: Colors.blue.withOpacity(0.3),
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(Icons.save, size: 20),
-                                      const SizedBox(width: 8),
-                                      const Text(
-                                        'حفظ والدخول',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                          ],
+                          ),
+                          onPressed: _isLoading ? null : _saveBaseUrl,
                         ),
                       ),
 
-                      // Guest Option (Only shown when needed)
                       if (_showGuestOption) ...[
-                        const SizedBox(height: 24),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Divider(
-                                color: Colors.grey.shade300,
-                                thickness: 1,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
-                              child: Text(
-                                'أو',
-                                style: TextStyle(
-                                  color: Colors.grey[500],
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Divider(
-                                color: Colors.grey.shade300,
-                                thickness: 1,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 24),
-                        SizedBox(
-                          width: double.infinity,
-                          height: 50,
-                          child: OutlinedButton(
-                            onPressed: _enterAsGuest,
-                            style: OutlinedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              side: BorderSide(color: Colors.blue.shade400),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.person_outline, size: 20, color: Colors.blue.shade600),
-                                const SizedBox(width: 8),
-                                Text(
-                                  'الدخول كزائر',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.blue.shade600,
-                                  ),
-                                ),
-                              ],
+                        const SizedBox(height: 20),
+                        const Text("أو", style: TextStyle(color: Colors.grey)),
+                        const SizedBox(height: 10),
+                        OutlinedButton.icon(
+                          icon: const Icon(Icons.person_outline, color: Colors.orange),
+                          label: const Text(
+                            "الدخول كزائر",
+                            style: TextStyle(
+                              color: Colors.orange,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'باستخدام الإعدادات الافتراضية',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey[500],
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: Colors.orange),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            minimumSize: const Size(double.infinity, 48),
                           ),
+                          onPressed: _enterAsGuest,
                         ),
                       ],
                     ],
                   ),
                 ),
-              ),
+              ],
             ),
           ),
         ),

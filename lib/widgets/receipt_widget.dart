@@ -19,29 +19,29 @@ class ReceiptWidget extends StatelessWidget {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Container(
-        width: 280, // تصغير كبير في العرض
+        width: 384 ,
         child: Material(
           color: Colors.white,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10), // تصغير البادنج
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 _buildHeaderWithLogo(),
-                const SizedBox(height: 6),
-                const Divider(thickness: 1, color: Colors.black),
+                const SizedBox(height: 12),
+                const Divider(thickness: 3, color: Colors.black),
                 _buildInvoiceInfo(),
-                const SizedBox(height: 6),
-                const Divider(thickness: 1, color: Colors.black),
+                const SizedBox(height: 12),
+                const Divider(thickness: 2, color: Colors.black),
                 _buildProductsTable(),
-                const SizedBox(height: 6),
-                const Divider(thickness: 1, color: Colors.black),
+                const SizedBox(height: 12),
+                const Divider(thickness: 3, color: Colors.black),
                 _buildTotalsSection(),
-                const SizedBox(height: 6),
+                const SizedBox(height: 12),
                 _buildQrCodeSection(),
-                const SizedBox(height: 6),
-                const Divider(thickness: 1, color: Colors.black),
+                const SizedBox(height: 12),
+                const Divider(thickness: 3, color: Colors.black),
                 _buildFooter(),
               ],
             ),
@@ -59,7 +59,7 @@ class ReceiptWidget extends StatelessWidget {
         // اللوجو من بيانات الشركة
         if (_getCompanyData()['imageUrl'] != null && _getCompanyData()['imageUrl'].toString().isNotEmpty)
           Container(
-            height: 50, // تصغير كبير في الارتفاع
+            height: 100, // حجم معتدل للوجو
             child: Center(
               child: _buildCompanyLogo(
                   _getFullImageUrl(_getCompanyData()['imageUrl']),
@@ -68,15 +68,15 @@ class ReceiptWidget extends StatelessWidget {
             ),
           ),
 
-        const SizedBox(height: 4),
+        const SizedBox(height: 8),
 
         // اسم الشركة
         Text(
           _getCompanyData()['ar'] ?? receiptModel.vendorBranchName ?? 'المتجر',
           style: const TextStyle(
-            fontSize: 16, // تصغير كبير في حجم الخط
+            fontSize: 24, // حجم معتدل
             fontWeight: FontWeight.bold,
-            height: 1.1,
+            height: 1.2,
             color: Colors.black87,
           ),
           textAlign: TextAlign.center,
@@ -84,15 +84,15 @@ class ReceiptWidget extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
         ),
 
-        const SizedBox(height: 2),
+        const SizedBox(height: 6),
 
         // العنوان
         if (_getCompanyData()['location'] != null)
           Text(
             'العنوان: ${_getCompanyData()['location']}',
             style: const TextStyle(
-              fontSize: 12, // تصغير كبير في حجم الخط
-              height: 1.1,
+              fontSize: 18, // حجم معتدل
+              height: 1.2,
               color: Colors.black,
               fontWeight: FontWeight.bold,
             ),
@@ -101,22 +101,22 @@ class ReceiptWidget extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
           ),
 
-        const SizedBox(height: 6),
+        const SizedBox(height: 10),
 
         // نوع الفاتورة
         Container(
-          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8), // تصغير البادنج
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.black, width: 1),
-            borderRadius: BorderRadius.circular(4),
+            border: Border.all(color: Colors.black, width: 2),
+            borderRadius: BorderRadius.circular(8),
             color: Colors.grey[50],
           ),
           child: const Text(
             'فاتورة ضريبية مبسطة',
             style: TextStyle(
-              fontSize: 14, // تصغير كبير في حجم الخط
+              fontSize: 20, // حجم معتدل
               fontWeight: FontWeight.bold,
-              height: 1.1,
+              height: 1.2,
               color: Colors.black87,
             ),
             textAlign: TextAlign.center,
@@ -147,8 +147,8 @@ class ReceiptWidget extends StatelessWidget {
 
   Widget _buildCompanyLogo(String imageUrl, String companyName) {
     return SizedBox(
-      width: 80, // تصغير كبير في العرض
-      height: 40, // تصغير كبير في الارتفاع
+      width: 150, // حجم معتدل للوجو
+      height: 70,
       child: FutureBuilder<String?>(
         future: _getCachedLogoPath(imageUrl, companyName),
         builder: (context, snapshot) {
@@ -210,14 +210,14 @@ class ReceiptWidget extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: 70, // تصغير كبير في العرض
-          height: 30, // تصغير كبير في الارتفاع
+          width: 140,
+          height: 60,
           decoration: BoxDecoration(
             border: Border.all(color: Colors.grey.shade300, width: 1),
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(6),
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(6),
             child: Image.file(
               imageFile,
               fit: BoxFit.contain,
@@ -234,14 +234,14 @@ class ReceiptWidget extends StatelessWidget {
   Widget _buildNetworkLogoWithCache(String imageUrl, String companyName) {
     _downloadAndCacheLogo(imageUrl, companyName);
     return Container(
-      width: 70, // تصغير كبير في العرض
-      height: 30, // تصغير كبير في الارتفاع
+      width: 140,
+      height: 60,
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey.shade300, width: 1),
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(6),
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(6),
         child: CachedNetworkImage(
           imageUrl: imageUrl,
           fit: BoxFit.contain,
@@ -254,23 +254,23 @@ class ReceiptWidget extends StatelessWidget {
 
   Widget _buildLogoPlaceholder(String companyName) {
     return Container(
-      width: 70, // تصغير كبير في العرض
-      height: 30, // تصغير كبير في الارتفاع
+      width: 140,
+      height: 60,
       decoration: BoxDecoration(
         color: Colors.grey[200],
         border: Border.all(color: Colors.grey.shade300, width: 1),
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(6),
       ),
       child: Center(
         child: Text(
-          companyName.split(' ').take(1).join(' '),
+          companyName.split(' ').take(2).join(' '),
           style: const TextStyle(
-            fontSize: 10, // تصغير كبير في حجم الخط
+            fontSize: 16, // حجم معتدل
             color: Colors.grey,
             fontWeight: FontWeight.bold,
           ),
           textAlign: TextAlign.center,
-          maxLines: 1,
+          maxLines: 2,
           overflow: TextOverflow.ellipsis,
         ),
       ),
@@ -281,10 +281,10 @@ class ReceiptWidget extends StatelessWidget {
     return Directionality(
       textDirection: ui.TextDirection.rtl,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6), // تصغير البادنج
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade400, width: 1),
-          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: Colors.grey.shade400, width: 2),
+          borderRadius: BorderRadius.circular(8),
           color: Colors.grey[50],
         ),
         child: Column(
@@ -294,18 +294,18 @@ class ReceiptWidget extends StatelessWidget {
             const Text(
               'معلومات الفاتورة',
               style: TextStyle(
-                fontSize: 12, // تصغير كبير في حجم الخط
+                fontSize: 18, // حجم أصغر للمعلومات
                 fontWeight: FontWeight.bold,
                 color: Colors.black87,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 8),
             const Divider(height: 1, color: Colors.grey),
-            const SizedBox(height: 4),
+            const SizedBox(height: 8),
             _buildInfoRow('رقم الفاتورة', '${receiptModel.receiptCode ?? "N/A"}'),
             _buildInfoRow('التاريخ', _formatDate(receiptModel.receiveDate ?? receiptModel.openDay)),
-            const SizedBox(height: 2),
+            const SizedBox(height: 6),
             _buildDualInfoRow(
               label1: 'الكاشير',
               value1: receiptModel.cashierName ?? 'N/A',
@@ -321,6 +321,7 @@ class ReceiptWidget extends StatelessWidget {
               label2: 'طريقة الدفع',
               value2: receiptModel.paymethodName ?? 'نقدي',
             ),
+            // تم إزالة حالة الطلب كما طلبت
             if (receiptModel.orderTypeName != null)
               _buildInfoRow('نوع الطلب', receiptModel.orderTypeName!),
           ],
@@ -336,7 +337,7 @@ class ReceiptWidget extends StatelessWidget {
       return const Center(
         child: Text(
           'لا توجد عناصر',
-          style: TextStyle(fontSize: 12, color: Colors.grey), // تصغير كبير في حجم الخط
+          style: TextStyle(fontSize: 18, color: Colors.grey),
         ),
       );
     }
@@ -346,28 +347,27 @@ class ReceiptWidget extends StatelessWidget {
       children: [
         const Text(
           'الخدمات',
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold), // تصغير كبير في حجم الخط
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
-        const SizedBox(height: 4),
-        // تحسين جدول الخدمات
+        const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
             color: Colors.grey[100],
-            border: Border.all(color: Colors.black, width: 1),
+            border: Border.all(color: Colors.black, width: 2),
           ),
           child: Row(
             children: [
               Expanded(
-                flex: 6, // زيادة المرونة للاسم
+                flex: 5,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
                   decoration: const BoxDecoration(
                     border: Border(left: BorderSide(color: Colors.black, width: 1)),
                   ),
                   child: const Text(
                     'المنتج / الخدمة',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -375,13 +375,13 @@ class ReceiptWidget extends StatelessWidget {
               Expanded(
                 flex: 2,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 2),
+                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
                   decoration: const BoxDecoration(
                     border: Border(left: BorderSide(color: Colors.black, width: 1)),
                   ),
                   child: const Text(
                     'الكمية',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -389,13 +389,13 @@ class ReceiptWidget extends StatelessWidget {
               Expanded(
                 flex: 3,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 2),
+                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
                   decoration: const BoxDecoration(
                     border: Border(left: BorderSide(color: Colors.black, width: 1)),
                   ),
                   child: const Text(
                     'السعر',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -403,10 +403,10 @@ class ReceiptWidget extends StatelessWidget {
               Expanded(
                 flex: 3,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 2),
+                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
                   child: const Text(
                     'الإجمالي',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -422,7 +422,7 @@ class ReceiptWidget extends StatelessWidget {
                 right: const BorderSide(color: Colors.black, width: 1),
                 bottom: BorderSide(
                   color: i == allProducts.length - 1 ? Colors.black : Colors.grey.shade400,
-                  width: i == allProducts.length - 1 ? 1 : 0.5,
+                  width: i == allProducts.length - 1 ? 2 : 1,
                 ),
               ),
               color: i.isEven ? Colors.white : Colors.grey[50],
@@ -437,9 +437,9 @@ class ReceiptWidget extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          flex: 6, // زيادة المرونة للاسم
+          flex: 5,
           child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 6),
             decoration: const BoxDecoration(
               border: Border(left: BorderSide(color: Colors.black, width: 1)),
             ),
@@ -448,7 +448,7 @@ class ReceiptWidget extends StatelessWidget {
               children: [
                 Text(
                   product.name,
-                  style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.right,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -456,21 +456,21 @@ class ReceiptWidget extends StatelessWidget {
                 if (product.hallName != null && product.hallName!.isNotEmpty)
                   Text(
                     'الصالة: ${product.hallName}',
-                    style: const TextStyle(fontSize: 9, color: Colors.grey),
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
                     textAlign: TextAlign.right,
                     maxLines: 1,
                   ),
                 if (product.reservationDate != null)
                   Text(
                     'موعد: ${_formatDate(product.reservationDate)}',
-                    style: const TextStyle(fontSize: 9, color: Colors.grey),
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
                     textAlign: TextAlign.right,
                     maxLines: 1,
                   ),
                 if (product.reservationFee > 0)
                   Text(
                     'حجز: ${_formatCurrency(product.reservationFee)}',
-                    style: const TextStyle(fontSize: 9, color: Colors.grey),
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
                     textAlign: TextAlign.right,
                     maxLines: 1,
                   ),
@@ -481,13 +481,13 @@ class ReceiptWidget extends StatelessWidget {
         Expanded(
           flex: 2,
           child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
+            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
             decoration: const BoxDecoration(
               border: Border(left: BorderSide(color: Colors.black, width: 1)),
             ),
             child: Text(
               '${product.quantity}',
-              style: const TextStyle(fontSize: 10),
+              style: const TextStyle(fontSize: 14),
               textAlign: TextAlign.center,
             ),
           ),
@@ -495,13 +495,13 @@ class ReceiptWidget extends StatelessWidget {
         Expanded(
           flex: 3,
           child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
+            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
             decoration: const BoxDecoration(
               border: Border(left: BorderSide(color: Colors.black, width: 1)),
             ),
             child: Text(
               _formatCurrency(product.price),
-              style: const TextStyle(fontSize: 10),
+              style: const TextStyle(fontSize: 14),
               textAlign: TextAlign.center,
             ),
           ),
@@ -509,10 +509,10 @@ class ReceiptWidget extends StatelessWidget {
         Expanded(
           flex: 3,
           child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
+            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
             child: Text(
               _formatCurrency(product.total),
-              style: const TextStyle(fontSize: 10),
+              style: const TextStyle(fontSize: 14),
               textAlign: TextAlign.center,
             ),
           ),
@@ -523,10 +523,10 @@ class ReceiptWidget extends StatelessWidget {
 
   Widget _buildTotalsSection() {
     return Container(
-      padding: const EdgeInsets.all(6), // تصغير البادنج
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey.shade400),
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(8),
         color: Colors.grey[50],
       ),
       child: Column(
@@ -539,13 +539,13 @@ class ReceiptWidget extends StatelessWidget {
           if (receiptModel.deliveryFee > 0)
             _buildTotalRow('رسوم التوصيل', _formatCurrency(receiptModel.deliveryFee)),
           _buildTotalRow('الضريبة', _formatCurrency(receiptModel.tax)),
-          const SizedBox(height: 4),
+          const SizedBox(height: 8),
           Container(
-            padding: const EdgeInsets.all(4), // تصغير البادنج
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: Colors.white,
-              border: Border.all(color: Colors.black, width: 1),
-              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: Colors.black, width: 2),
+              borderRadius: BorderRadius.circular(6),
             ),
             child: _buildTotalRow(
               'المبلغ المستحق',
@@ -553,10 +553,12 @@ class ReceiptWidget extends StatelessWidget {
               isTotal: true,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 8),
           _buildTotalRow('طريقة الدفع', receiptModel.paymethodName ?? 'نقدي'),
           if (receiptModel.cash > 0) _buildTotalRow('المبلغ النقدي', _formatCurrency(receiptModel.cash)),
           if (receiptModel.card > 0) _buildTotalRow('المبلغ بالبطاقة', _formatCurrency(receiptModel.card)),
+          if (receiptModel.giftPhoneNumber != null && receiptModel.giftPhoneNumber!.isNotEmpty)
+            _buildTotalRow('رقم الهدية', receiptModel.giftPhoneNumber!),
         ],
       ),
     );
@@ -568,28 +570,29 @@ class ReceiptWidget extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.all(6), // تصغير البادنج
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey.shade300),
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
         children: [
           const Text(
             'رمز الاستعلام',
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold), // تصغير كبير في حجم الخط
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 8),
           QrImageView(
             data: receiptModel.qrCodeData!,
             version: QrVersions.auto,
-            size: 130.0, // تكبير حجم QR
+            size: 140.0, // حجم معتدل لل QR
             foregroundColor: Colors.black,
           ),
+          const SizedBox(height: 8),
           Text(
             receiptModel.qrCodeData!,
-            style: const TextStyle(fontSize: 8, color: Colors.grey), // تصغير كبير في حجم الخط
+            style: const TextStyle(fontSize: 12, color: Colors.grey),
             textAlign: TextAlign.center,
           ),
         ],
@@ -605,10 +608,10 @@ class ReceiptWidget extends StatelessWidget {
       children: [
         // معلومات الاتصال
         Container(
-          padding: const EdgeInsets.all(4), // تصغير البادنج
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(6),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -616,23 +619,23 @@ class ReceiptWidget extends StatelessWidget {
               if (companyData['phoneNumber'] != null)
                 Text(
                   'هاتف: ${companyData['phoneNumber']}',
-                  style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold), // تصغير كبير في حجم الخط
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
-              const SizedBox(height: 2),
+              const SizedBox(height: 4),
               if (companyData['location'] != null)
                 Text(
                   'العنوان: ${companyData['location']}',
-                  style: const TextStyle(fontSize: 9), // تصغير كبير في حجم الخط
+                  style: const TextStyle(fontSize: 14),
                   textAlign: TextAlign.center,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
               if (companyData['taxnumber'] != null) ...[
-                const SizedBox(height: 2),
+                const SizedBox(height: 4),
                 Text(
                   'الرقم الضريبي: ${companyData['taxnumber']}',
-                  style: const TextStyle(fontSize: 9, color: Colors.grey, fontWeight: FontWeight.bold), // تصغير كبير في حجم الخط
+                  style: const TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -640,14 +643,64 @@ class ReceiptWidget extends StatelessWidget {
           ),
         ),
 
-        const SizedBox(height: 4),
+        const SizedBox(height: 8),
+
+        // سياسة الاسترجاع والاستبدال
+        if (companyData['description'] != null || companyData['cancellationPolicy'] != null)
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey.shade300),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'سياسة الاسترجاع والاستبدال',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 6),
+                if (companyData['description'] != null)
+                  Text(
+                    companyData['description']!,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      height: 1.4,
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                if (companyData['cancellationPolicy'] != null) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    companyData['cancellationPolicy']!,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      height: 1.4,
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ],
+            ),
+          ),
+
+        const SizedBox(height: 10),
 
         // رسالة شكر
         Container(
-          padding: const EdgeInsets.all(4), // تصغير البادنج
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             border: Border.all(color: Colors.green.shade300),
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(6),
             color: Colors.green[50],
           ),
           child: const Column(
@@ -655,28 +708,28 @@ class ReceiptWidget extends StatelessWidget {
               Text(
                 'شكراً لثقتكم بنا',
                 style: TextStyle(
-                  fontSize: 10, // تصغير كبير في حجم الخط
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: Colors.green,
                 ),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 1),
+              SizedBox(height: 2),
               Text(
                 'نرحب بزيارتكم دائماً',
-                style: TextStyle(fontSize: 9, color: Colors.green), // تصغير كبير في حجم الخط
+                style: TextStyle(fontSize: 14, color: Colors.green),
                 textAlign: TextAlign.center,
               ),
             ],
           ),
         ),
 
-        const SizedBox(height: 4),
+        const SizedBox(height: 8),
 
         // معلومات إضافية
         Text(
           'رقم السيريال: ${receiptModel.daySerialNumber}',
-          style: const TextStyle(fontSize: 9, color: Colors.grey, fontWeight: FontWeight.bold), // تصغير كبير في حجم الخط
+          style: const TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
       ],
@@ -692,7 +745,7 @@ class ReceiptWidget extends StatelessWidget {
 
   Widget _buildInfoRow(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
+      padding: const EdgeInsets.symmetric(vertical: 4),
       child: Directionality(
         textDirection: ui.TextDirection.ltr,
         child: Row(
@@ -700,11 +753,11 @@ class ReceiptWidget extends StatelessWidget {
           children: [
             Text(
               value,
-              style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w500), // تصغير كبير في حجم الخط
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
             ),
             Text(
               label,
-              style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold), // تصغير كبير في حجم الخط
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -719,7 +772,7 @@ class ReceiptWidget extends StatelessWidget {
     required String value2,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
+      padding: const EdgeInsets.symmetric(vertical: 4),
       child: Directionality(
         textDirection: ui.TextDirection.rtl,
         child: Row(
@@ -731,7 +784,7 @@ class ReceiptWidget extends StatelessWidget {
                     TextSpan(
                       text: '$label1: ',
                       style: const TextStyle(
-                        fontSize: 9, // تصغير كبير في حجم الخط
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
@@ -739,7 +792,7 @@ class ReceiptWidget extends StatelessWidget {
                     TextSpan(
                       text: value1,
                       style: const TextStyle(
-                        fontSize: 9, // تصغير كبير في حجم الخط
+                        fontSize: 14,
                         fontWeight: FontWeight.w500,
                         color: Colors.black,
                       ),
@@ -748,7 +801,7 @@ class ReceiptWidget extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(width: 8),
+            const Expanded(child: SizedBox()),
             Expanded(
               child: RichText(
                 text: TextSpan(
@@ -756,7 +809,7 @@ class ReceiptWidget extends StatelessWidget {
                     TextSpan(
                       text: '$label2: ',
                       style: const TextStyle(
-                        fontSize: 9, // تصغير كبير في حجم الخط
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
@@ -764,7 +817,7 @@ class ReceiptWidget extends StatelessWidget {
                     TextSpan(
                       text: value2,
                       style: const TextStyle(
-                        fontSize: 9, // تصغير كبير في حجم الخط
+                        fontSize: 14,
                         fontWeight: FontWeight.w500,
                         color: Colors.black,
                       ),
@@ -781,7 +834,7 @@ class ReceiptWidget extends StatelessWidget {
 
   Widget _buildTotalRow(String label, String value, {bool isTotal = false}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
+      padding: const EdgeInsets.symmetric(vertical: 4),
       child: Directionality(
         textDirection: ui.TextDirection.ltr,
         child: Row(
@@ -790,7 +843,7 @@ class ReceiptWidget extends StatelessWidget {
             Text(
               value,
               style: TextStyle(
-                fontSize: isTotal ? 12 : 10, // تصغير كبير في حجم الخط
+                fontSize: isTotal ? 18 : 16,
                 fontWeight: isTotal ? FontWeight.bold : FontWeight.w600,
                 color: isTotal ? Colors.black : Colors.grey[800],
               ),
@@ -798,7 +851,7 @@ class ReceiptWidget extends StatelessWidget {
             Text(
               label,
               style: TextStyle(
-                fontSize: isTotal ? 12 : 10, // تصغير كبير في حجم الخط
+                fontSize: isTotal ? 18 : 16,
                 fontWeight: isTotal ? FontWeight.bold : FontWeight.w600,
                 color: isTotal ? Colors.black : Colors.grey[800],
               ),
