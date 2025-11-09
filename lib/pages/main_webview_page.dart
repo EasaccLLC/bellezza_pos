@@ -341,49 +341,6 @@ class _MainWebViewPageState extends State<MainWebViewPage> {
     }
   }
 
-  void _printDetailedData(Map<String, dynamic> data) {
-    print("📊 تفاصيل البيانات المستلمة:");
-
-    // طباعة بيانات الفاتورة الأساسية
-    print("📄 بيانات الفاتورة:");
-    print("   - رقم الفاتورة: ${data['code'] ?? 'N/A'}");
-    print("   - الإجمالي: ${data['total'] ?? 'N/A'}");
-    print("   - الضريبة: ${data['tax'] ?? 'N/A'}");
-    print("   - العميل: ${data['clientName'] ?? 'N/A'}");
-    print("   - الكاشير: ${data['cashierName'] ?? 'N/A'}");
-    print("   - الفرع: ${data['vendorBranchName'] ?? 'N/A'}");
-    print("   - طريقة الدفع: ${data['paymethodName'] ?? 'N/A'}");
-
-    // طباعة بيانات الشركة إذا موجودة
-    if (data.containsKey('Company') && data['Company'] is Map) {
-      final company = data['Company'] as Map;
-      print("🏢 بيانات الشركة:");
-      print("   - الاسم: ${company['ar'] ?? 'N/A'}");
-      print("   - الهاتف: ${company['phoneNumber'] ?? 'N/A'}");
-      print("   - العنوان: ${company['location'] ?? 'N/A'}");
-      print("   - اللوجو: ${company['imageUrl'] ?? 'N/A'}");
-      print("   - سياسة الاسترجاع: ${company['cancellationPolicy'] ?? 'N/A'}");
-    }
-
-    // طباعة تفاصيل الطلبات
-    if (data.containsKey('orderDetails') && data['orderDetails'] is Map) {
-      final orderDetails = data['orderDetails'] as Map;
-      print("🛒 تفاصيل الطلبات:");
-      orderDetails.forEach((printerIp, items) {
-        print("   - طابعة: $printerIp");
-        if (items is List) {
-          for (var item in items) {
-            print("     * ${item['itemName']} - الكمية: ${item['quantity']} - السعر: ${item['itemPrice']} - الإجمالي: ${item['total']}");
-          }
-        }
-      });
-    }
-
-    // طباعة QR Code إذا موجود
-    if (data['qrCodeData'] != null) {
-      print("🔗 رمز QR: ${data['qrCodeData']}");
-    }
-  }
 
 
   Future<void> _setupPrintAppHandler(InAppWebViewController c) async {

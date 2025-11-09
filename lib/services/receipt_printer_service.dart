@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_thermal_printer/flutter_thermal_printer.dart';
 import 'package:flutter_thermal_printer/utils/printer.dart';
@@ -42,6 +44,7 @@ class ReceiptPrinter {
       }
 
       print("💰 بدء طباعة فاتورة الكاشير على: $mainPrinterIp");
+
 
       // استخدام الطباعة المباشرة بدون connect
       await _printDirectViaNetwork(mainPrinterIp, receiptModel.data, context);
@@ -286,10 +289,36 @@ class ReceiptPrinter {
       final receiptModel = ReceiptModel(data: data);
       final widget = ReceiptWidget(receiptModel: receiptModel);
 
-      List<int> screenshotBytes = await FlutterThermalPrinter.instance.screenShotWidget(
+      final profile = await CapabilityProfile.load();
+      final generator = Generator(PaperSize.mm80, profile);
+      Uint8List screenshotBytes = await FlutterThermalPrinter.instance.screenShotWidget(
         context,
+        generator: generator,
         widget: widget,
       );
+
+      if (context.mounted) {
+        await showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return Dialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.7,
+                  height: MediaQuery.of(context).size.height * 0.7,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: SingleChildScrollView(
+                    child: Image.memory(screenshotBytes),
+                  ),
+                ),
+              );
+            });
+      }
 
       print("📸 تم إنشاء الصورة بحجم: ${screenshotBytes.length} bytes");
 
