@@ -16,12 +16,11 @@ class ReceiptWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Container(
-        width: 280, // تصغير كبير في العرض
-        child: Material(
-          color: Colors.white,
+    return SizedBox(
+      width: 280,
+      child: Material(
+        child: Directionality(
+          textDirection: TextDirection.rtl,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10), // تصغير البادنج
             child: Column(

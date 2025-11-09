@@ -44,6 +44,7 @@ dependencies:
   path_provider: ^2.1.1
   http: ^1.1.0
   barcode_widget: ^2.0.1
+  screenshot: ^3.0.0
   flutter_launcher_icons: ^0.14.4
   intl: ^0.18.1
   printing: ^5.9.1
