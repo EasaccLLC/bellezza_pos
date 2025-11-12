@@ -26,6 +26,31 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+		<key>NSAllowsArbitraryLoadsInWebContent</key>
+		<true/>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>The app requires Bluetooth access to connect with nearby devices.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>The app needs Bluetooth access to communicate with external devices.</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_printer._tcp</string>
+		<string>_ipps._tcp</string>
+		<string>_ipp._tcp</string>
+	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>Required for receipt printing functionality.</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Required for connecting to thermal printers.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Required for receipt printing functionality.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
@@ -47,46 +72,7 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-
-	<!-- === Additional Permissions === -->
-
-	<!-- Network Permissions -->
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
-		<key>NSAllowsArbitraryLoadsInWebContent</key>
-		<true/>
-		<key>NSAllowsLocalNetworking</key>
-		<true/>
-	</dict>
-
-	<key>NSLocalNetworkUsageDescription</key>
-	<string>Required for connecting to thermal printers.</string>
-
-   <key>NSBluetoothAlwaysUsageDescription</key>
-   <string>The app requires Bluetooth access to connect with nearby devices.</string>
-   <key>NSBluetoothPeripheralUsageDescription</key>
-   <string>The app needs Bluetooth access to communicate with external devices.</string>
-
-
-	<!-- Camera and Photos -->
-	<key>NSCameraUsageDescription</key>
-	<string>Required for receipt printing functionality.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Required for receipt printing functionality.</string>
-
-	<!-- WebView Support -->
 	<key>io.flutter.embedded_views_preview</key>
 	<true/>
-
-	<!-- Printer Services -->
-	<key>NSBonjourServices</key>
-	<array>
-		<string>_printer._tcp</string>
-		<string>_ipps._tcp</string>
-		<string>_ipp._tcp</string>
-	</array>
-
 </dict>
 </plist>

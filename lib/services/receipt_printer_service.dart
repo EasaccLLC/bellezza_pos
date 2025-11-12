@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_thermal_printer/flutter_thermal_printer.dart';
 import 'package:screenshot/screenshot.dart';
 import '../model/receipt_model.dart';
+import '../utils/localizations_portal.dart';
 import '../widgets/receipt_widget.dart';
 import '../widgets/service_receipt_widget.dart';
 
@@ -17,7 +18,7 @@ class ReceiptPrinter {
       BuildContext context,
       ) async {
     try {
-      print("🟢 بدء عملية الطباعة الكاملة");
+      print(" بدء عملية الطباعة الكاملة");
       final receiptModel = ReceiptModel(data: data);
 
       // 1. أولاً: طباعة فاتورة الكاشير الرئيسية
@@ -26,10 +27,10 @@ class ReceiptPrinter {
       // 2. ثانياً: طباعة فواتير الخدمات لكل printerIp
       // await _printServiceReceipts(receiptModel, context);
 
-      print("✅ اكتملت عملية الطباعة بنجاح");
+      print(" اكتملت عملية الطباعة بنجاح");
 
     } catch (e) {
-      print("❌ خطأ عام في الطباعة: $e");
+      print(" خطأ عام في الطباعة: $e");
       rethrow;
     }
   }
@@ -214,11 +215,11 @@ class ReceiptPrinter {
 
       final profile = await CapabilityProfile.load();
       final generator = Generator(PaperSize.mm80, profile);
-      // final Uint8List screenshotBytes = await FlutterThermalPrinter.instance.screenShotWidget(
-      //   context,
-      //   generator: generator,
-      //   widget: widget,
-      // );
+      final Uint8List screenshotBytes = await FlutterThermalPrinter.instance.screenShotWidget(
+        context,
+        generator: generator,
+        widget: widget,
+      );
 
       // final controller = ScreenshotController();
       List<int> finalBytes = [];
@@ -253,7 +254,10 @@ class ReceiptPrinter {
       //               borderRadius: BorderRadius.circular(8),
       //             ),
       //             child: SingleChildScrollView(
-      //               child: Image.memory(screenshotBytes),
+      //               child: Image.memory(
+      //                 screenshotBytes,
+      //                 fit: BoxFit.contain,
+      //               ),
       //             ),
       //           ),
       //         );
@@ -281,9 +285,9 @@ class ReceiptPrinter {
       }) async {
     final controller = ScreenshotController();
     final image = await controller.captureFromWidget(
-      widget,
-      pixelRatio: 3,
-      // delay: delay,
+      buildScreenshot(context, widget),
+      context: context,
+      pixelRatio: View.of(context).devicePixelRatio,
     );
     Generator? generator0;
     if (generator == null) {
@@ -339,6 +343,8 @@ class ReceiptPrinter {
     return number + (8 - (number % 8));
   }
 
+
+
   static img.Image _buildImageRasterAvaliable(img.Image image) {
     final avaliable = image.width % 8 == 0;
     if (avaliable) {
@@ -375,4 +381,15 @@ class ReceiptPrinter {
   //     rethrow;
   //   }
   // }
+
+  static Widget buildScreenshot(BuildContext context, Widget receiptWidget) {
+    // نمرر context الأصلي عشان نقدر نجيب locale
+    return LocalizationsPortal(
+      originalContext: context,
+      child: receiptWidget,
+    );
+  }
+
+
+
 }
