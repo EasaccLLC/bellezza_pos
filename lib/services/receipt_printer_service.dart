@@ -297,7 +297,10 @@ class ReceiptPrinter {
       final profile = await CapabilityProfile.load();
       generator0 = Generator(paperSize, profile);
     }
-    img.Image? imagebytes = img.decodeImage(image);
+    // img.Image? imagebytes = img.decodeImage(image);
+    img.Image? decodedImage = img.decodeImage(image);
+    Uint8List safeBitmapBytes = img.encodeBmp(decodedImage!);
+    img.Image? imagebytes = img.decodeBmp(safeBitmapBytes);
 
     if (customWidth != null) {
       final width = _makeDivisibleBy8(customWidth);

@@ -36,7 +36,6 @@ class ReceiptModel {
   String? get location => data['location']?.toString();
   String? get qrCodeData => data['qrCodeData']?.toString();
 
-  // التفاصيل حسب كل طابعة
   Map<String, List<ProductItem>> get orderDetails {
     final Map<String, List<ProductItem>> result = {};
     final details = data['orderDetails'] as Map<String, dynamic>?;
