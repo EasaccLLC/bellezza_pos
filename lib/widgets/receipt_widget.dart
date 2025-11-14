@@ -1,167 +1,4 @@
-import 'package:flutter/material.dart';
-import '../model/receipt_model.dart';
-
-class ReceiptWidget extends StatelessWidget {
-  final ReceiptModel receiptModel;
-  final GlobalKey repaintBoundaryKey = GlobalKey();
-
-   ReceiptWidget({super.key, required this.receiptModel});
-
-  @override
-  Widget build(BuildContext context) {
-    final items = receiptModel.orderDetails.values.expand((i) => i).toList();
-
-    return Container(
-      width: 315,
-      padding: const EdgeInsets.all(2),
-      child: Directionality(
-        textDirection: TextDirection.rtl,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            _buildHeader(),
-            const SizedBox(height: 3),
-            const Divider(thickness: 0.5),
-            _buildInfoSection(),
-            const Divider(thickness: 0.5),
-            _buildTableHeader(),
-            const Divider(thickness: 0.5),
-            ...items.map((e) => _buildItemRow(e)).toList(),
-            const Divider(thickness: 0.5),
-            _buildTotalsSection(),
-            const SizedBox(height: 4),
-            _buildFooter(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Column(
-      children: [
-        Text(
-          receiptModel.vendorName ?? 'اسم المنشأة',
-          style: const TextStyle(fontSize: 10,),
-          textAlign: TextAlign.center,
-        ),
-        if (receiptModel.vendorBranchName != null)
-          Text(receiptModel.vendorBranchName!, style: const TextStyle(fontSize: 6)),
-        if (receiptModel.location != null)
-          Text(receiptModel.location!, style: const TextStyle(fontSize: 6)),
-        if (receiptModel.clientPhone != null)
-          Text('${receiptModel.clientPhone!}', style: const TextStyle(fontSize: 6)),
-      ],
-    );
-  }
-
-  Widget _buildInfoSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _infoRow('رقم الفاتورة', receiptModel.receiptCode ?? '-'),
-        _infoRow('التاريخ', receiptModel.receiveDate ?? '-'),
-        _infoRow('الكاشير', receiptModel.cashierName ?? '-'),
-        if (receiptModel.clientName != null)
-          _infoRow('العميل', receiptModel.clientName!),
-        if (receiptModel.orderTypeName != null)
-          _infoRow('نوع الطلب', receiptModel.orderTypeName!),
-        if (receiptModel.paymethodName != null)
-          _infoRow('طريقة الدفع', receiptModel.paymethodName!),
-      ],
-    );
-  }
-
-  Widget _infoRow(String label, String value) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(label, style: const TextStyle(fontSize: 6)),
-        Text(value, style: const TextStyle(fontSize: 6)),
-      ],
-    );
-  }
-
-  Widget _buildTableHeader() {
-    return Row(
-      children: const [
-        Expanded(flex: 4, child: Text('المنتج', textAlign: TextAlign.center, style: TextStyle(fontSize: 6))),
-        Expanded(flex: 1, child: Text('الكمية', textAlign: TextAlign.center, style: TextStyle(fontSize: 6))),
-        Expanded(flex: 2, child: Text('السعر', textAlign: TextAlign.center, style: TextStyle(fontSize: 6))),
-        Expanded(flex: 2, child: Text('الإجمالي', textAlign: TextAlign.center, style: TextStyle(fontSize: 6))),
-      ],
-    );
-  }
-
-  Widget _buildItemRow(ProductItem item) {
-    return Row(
-      children: [
-        Expanded(flex: 4, child: Text(item.name, textAlign: TextAlign.center, style: const TextStyle(fontSize: 6))),
-        Expanded(flex: 1, child: Text('${item.quantity}', textAlign: TextAlign.center, style: const TextStyle(fontSize: 6))),
-        Expanded(flex: 2, child: Text(item.price.toStringAsFixed(2), textAlign: TextAlign.center, style: const TextStyle(fontSize: 6))),
-        Expanded(flex: 2, child: Text(item.total.toStringAsFixed(2), textAlign: TextAlign.center, style: const TextStyle(fontSize: 6))),
-      ],
-    );
-  }
-
-  Widget _buildTotalsSection() {
-    return Column(
-      children: [
-        _totalRow('الإجمالي الفرعي', receiptModel.subtotal),
-        if (receiptModel.discountTotal > 0)
-          _totalRow('الخصم', -receiptModel.discountTotal),
-        if (receiptModel.tax > 0)
-          _totalRow('الضريبة', receiptModel.tax),
-        if (receiptModel.deliveryFee > 0)
-          _totalRow('رسوم التوصيل', receiptModel.deliveryFee),
-        const Divider(thickness: 0.5),
-        _totalRow('الإجمالي النهائي', receiptModel.totalAfterDiscount,
-            isBold: true, fontSize: 8),
-      ],
-    );
-  }
-
-  // دا الحالي الجديد
-
-  Widget _totalRow(String title, double value,
-      {bool isBold = false, double fontSize = 6}) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(title,
-            style: TextStyle(
-              fontSize: fontSize,
-            )),
-        Text(
-          value.toStringAsFixed(2),
-          style: TextStyle(
-            fontSize: fontSize,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildFooter() {
-    return Column(
-      children: [
-        const Divider(thickness: 0.5),
-        if (receiptModel.qrCodeData != null)
-          Image.network(receiptModel.qrCodeData!,
-              width: 20, height: 20, errorBuilder: (_, __, ___) => const SizedBox()),
-        const SizedBox(height: 2),
-        const Text('شكراً لزيارتك',
-            style: TextStyle(fontSize: 6)),
-        Text('Powered by بليزا',
-            style: TextStyle(fontSize: 5, color: Colors.grey)),
-      ],
-    );
-  }
-}
-
-
-/*
-* import 'dart:io';
+import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -179,401 +16,246 @@ class ReceiptWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 280,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10), // تصغير البادنج
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // _buildHeaderWithLogo(),
-            const SizedBox(height: 6),
-            const Divider(thickness: 1, color: Colors.black),
-            _buildInvoiceInfo(),
-            const SizedBox(height: 6),
-            const Divider(thickness: 1, color: Colors.black),
-            _buildProductsTable(),
-            const SizedBox(height: 6),
-            const Divider(thickness: 1, color: Colors.black),
-            _buildTotalsSection(),
-            const SizedBox(height: 6),
-            _buildQrCodeSection(),
-            const SizedBox(height: 6),
-            const Divider(thickness: 1, color: Colors.black),
-            _buildFooter(),
-          ],
+    return Directionality(
+      textDirection: ui.TextDirection.rtl,
+      child: Container(
+        width: 250, // تعديل العرض
+        child: Material(
+          color: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5), // تعديل الحواف
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _buildHeaderWithLogo(),
+                const SizedBox(height: 6),
+                const Divider(thickness: 2, color: Colors.black),
+                _buildInvoiceInfo(),
+                const SizedBox(height: 6),
+                const Divider(thickness: 1, color: Colors.black),
+                _buildProductsTable(),
+                const SizedBox(height: 6),
+                const Divider(thickness: 2, color: Colors.black),
+                _buildTotalsSection(),
+                const SizedBox(height: 6),
+                _buildQrCodeSection(),
+                const SizedBox(height: 6),
+                const Divider(thickness: 2, color: Colors.black),
+                _buildFooter(),
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
 
-  // Widget _buildHeaderWithLogo() {
-  //   return Column(
-  //     mainAxisSize: MainAxisSize.min,
-  //     crossAxisAlignment: CrossAxisAlignment.stretch,
-  //     children: [
-  //       // اللوجو من بيانات الشركة
-  //       if (_getCompanyData()['imageUrl'] != null && _getCompanyData()['imageUrl'].toString().isNotEmpty)
-  //         Container(
-  //           height: 50, // تصغير كبير في الارتفاع
-  //           child: Center(
-  //             child: _buildCompanyLogo(
-  //                 _getFullImageUrl(_getCompanyData()['imageUrl']),
-  //                 _getCompanyData()['ar'] ?? receiptModel.vendorBranchName ?? 'المتجر'
-  //             ),
-  //           ),
-  //         ),
-  //
-  //       const SizedBox(height: 4),
-  //
-  //       // اسم الشركة
-  //       Text(
-  //         _getCompanyData()['ar'] ?? receiptModel.vendorBranchName ?? 'المتجر',
-  //   textDirection: TextDirection.rtl,
-  //   style: const TextStyle(
-  //           fontSize: 16, // تصغير كبير في حجم الخط
-  //           fontWeight: FontWeight.bold,
-  //           height: 1.1,
-  //           color: Colors.black87,
-  //         ),
-  //         textAlign: TextAlign.center,
-  //         maxLines: 2,
-  //         overflow: TextOverflow.ellipsis,
-  //       ),
-  //
-  //       const SizedBox(height: 2),
-  //
-  //       // العنوان
-  //       if (_getCompanyData()['location'] != null)
-  //         Text(
-  //           'العنوان: ${_getCompanyData()['location']}',
-  //
-  //           style: const TextStyle(
-  //             fontSize: 12, // تصغير كبير في حجم الخط
-  //             height: 1.1,
-  //             color: Colors.black,
-  //             fontWeight: FontWeight.bold,
-  //           ),
-  //           textDirection: TextDirection.rtl,
-  //           textAlign: TextAlign.center,
-  //           maxLines: 2,
-  //           overflow: TextOverflow.ellipsis,
-  //         ),
-  //
-  //       const SizedBox(height: 6),
-  //
-  //       // نوع الفاتورة
-  //       Container(
-  //         padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8), // تصغير البادنج
-  //         decoration: BoxDecoration(
-  //           border: Border.all(color: Colors.black, width: 1),
-  //           borderRadius: BorderRadius.circular(4),
-  //           color: Colors.grey[50],
-  //         ),
-  //         child: const Text(
-  //           'فاتورة ضريبية مبسطة',
-  //           style: TextStyle(
-  //             fontSize: 14, // تصغير كبير في حجم الخط
-  //             fontWeight: FontWeight.bold,
-  //             height: 1.1,
-  //             color: Colors.black87,
-  //           ),
-  //           textDirection: TextDirection.rtl,
-  //           textAlign: TextAlign.center,
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
+  Widget _buildHeaderWithLogo() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (_getCompanyData()['imageUrl'] != null && _getCompanyData()['imageUrl'].toString().isNotEmpty)
+          Container(
+            height: 60,
+            child: Center(
+              child: _buildCompanyLogo(
+                  _getFullImageUrl(_getCompanyData()['imageUrl']),
+                  _getCompanyData()['ar'] ?? receiptModel.vendorBranchName ?? 'المتجر'
+              ),
+            ),
+          ),
+        const SizedBox(height: 4),
+        Text(
+          _getCompanyData()['ar'] ?? receiptModel.vendorBranchName ?? 'المتجر',
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            height: 1.2,
+            color: Colors.black,
+          ),
+          textAlign: TextAlign.center,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+        const SizedBox(height: 4),
+        if (_getCompanyData()['location'] != null)
+          Text(
+            'العنوان: ${_getCompanyData()['location']}',
+            style: const TextStyle(
+              fontSize: 12,
+              height: 1.2,
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        const SizedBox(height: 6),
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.black, width: 1),
+          ),
+          child: const Text(
+            'فاتورة ضريبية مبسطة',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              height: 1.2,
+              color: Colors.black,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ],
+    );
+  }
 
-  // String get _baseUrl {
-  //   final url = SharedPreferencesService.getBaseUrl();
-  //   return url;
-  // }
+  String get _baseUrl => SharedPreferencesService.getBaseUrl();
 
-  // String _getFullImageUrl(String imagePath) {
-  //   final baseUrl = _baseUrl;
-  //
-  //   if (imagePath.startsWith('http')) {
-  //     return imagePath;
-  //   }
-  //
-  //   if (imagePath.startsWith('/')) {
-  //     return '$baseUrl${imagePath.substring(1)}';
-  //   }
-  //
-  //   return '$baseUrl$imagePath';
-  // }
+  String _getFullImageUrl(String imagePath) {
+    final baseUrl = _baseUrl;
+    if (imagePath.startsWith('http')) return imagePath;
+    if (imagePath.startsWith('/')) return '$baseUrl${imagePath.substring(1)}';
+    return '$baseUrl$imagePath';
+  }
 
-  // Widget _buildCompanyLogo(String imageUrl, String companyName) {
-  //   return SizedBox(
-  //     width: 80, // تصغير كبير في العرض
-  //     height: 40, // تصغير كبير في الارتفاع
-  //     child: FutureBuilder<String?>(
-  //       future: _getCachedLogoPath(imageUrl, companyName),
-  //       builder: (context, snapshot) {
-  //         if (snapshot.connectionState == ConnectionState.waiting) {
-  //           return _buildLogoPlaceholder(companyName);
-  //         }
-  //
-  //         if (snapshot.hasData && snapshot.data != null) {
-  //           return _buildLogoImage(File(snapshot.data!), companyName);
-  //         }
-  //
-  //         return _buildNetworkLogoWithCache(imageUrl, companyName);
-  //       },
-  //     ),
-  //   );
-  // }
+  Widget _buildCompanyLogo(String imageUrl, String companyName) {
+    return SizedBox(
+      width: 100,
+      height: 50,
+      child: FutureBuilder<String?>(
+        future: _getCachedLogoPath(imageUrl, companyName),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return _buildLogoPlaceholder(companyName);
+          }
+          if (snapshot.hasData && snapshot.data != null) {
+            return _buildLogoImage(File(snapshot.data!), companyName);
+          }
+          return _buildNetworkLogoWithCache(imageUrl, companyName);
+        },
+      ),
+    );
+  }
 
-  // Future<String?> _getCachedLogoPath(String imageUrl, String companyName) async {
-  //   try {
-  //     final prefs = await SharedPreferences.getInstance();
-  //     final cachedPath = prefs.getString('cached_logo_path');
-  //     final cachedUrl = prefs.getString('cached_logo_url');
-  //
-  //     if (cachedPath != null && cachedUrl == imageUrl) {
-  //       final file = File(cachedPath);
-  //       if (await file.exists()) {
-  //         return cachedPath;
-  //       }
-  //     }
-  //
-  //     return await _downloadAndCacheLogo(imageUrl, companyName);
-  //   } catch (e) {
-  //     return null;
-  //   }
-  // }
+  Future<String?> _getCachedLogoPath(String imageUrl, String companyName) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final cachedPath = prefs.getString('cached_logo_path');
+      final cachedUrl = prefs.getString('cached_logo_url');
+      if (cachedPath != null && cachedUrl == imageUrl) {
+        final file = File(cachedPath);
+        if (await file.exists()) return cachedPath;
+      }
+      return await _downloadAndCacheLogo(imageUrl, companyName);
+    } catch (e) {
+      return null;
+    }
+  }
 
-  // Future<String?> _downloadAndCacheLogo(String imageUrl, String companyName) async {
-  //   try {
-  //     final response = await http.get(Uri.parse(imageUrl));
-  //     if (response.statusCode == 200) {
-  //       final bytes = response.bodyBytes;
-  //       final directory = await getTemporaryDirectory();
-  //       final filePath = '${directory.path}/company_logo_${companyName.hashCode}.png';
-  //       final file = File(filePath);
-  //       await file.writeAsBytes(bytes);
-  //       final prefs = await SharedPreferences.getInstance();
-  //       await prefs.setString('cached_logo_path', filePath);
-  //       await prefs.setString('cached_logo_url', imageUrl);
-  //       return filePath;
-  //     }
-  //   } catch (e) {
-  //     print("خطأ في تحميل الصورة: $e");
-  //   }
-  //   return null;
-  // }
+  Future<String?> _downloadAndCacheLogo(String imageUrl, String companyName) async {
+    try {
+      final response = await http.get(Uri.parse(imageUrl));
+      if (response.statusCode == 200) {
+        final bytes = response.bodyBytes;
+        final directory = await getTemporaryDirectory();
+        final filePath = '${directory.path}/company_logo_${companyName.hashCode}.png';
+        final file = File(filePath);
+        await file.writeAsBytes(bytes);
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('cached_logo_path', filePath);
+        await prefs.setString('cached_logo_url', imageUrl);
+        return filePath;
+      }
+    } catch (e) {}
+    return null;
+  }
 
-  // Widget _buildLogoImage(File imageFile, String companyName) {
-  //   return Column(
-  //     mainAxisSize: MainAxisSize.min,
-  //     children: [
-  //       Container(
-  //         width: 70, // تصغير كبير في العرض
-  //         height: 30, // تصغير كبير في الارتفاع
-  //         decoration: BoxDecoration(
-  //           border: Border.all(color: Colors.grey.shade300, width: 1),
-  //           borderRadius: BorderRadius.circular(4),
-  //         ),
-  //         child: ClipRRect(
-  //           borderRadius: BorderRadius.circular(4),
-  //           child: Image.file(
-  //             imageFile,
-  //             fit: BoxFit.contain,
-  //             errorBuilder: (context, error, stackTrace) {
-  //               return _buildLogoPlaceholder(companyName);
-  //             },
-  //           ),
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
+  Widget _buildLogoImage(File imageFile, String companyName) {
+    return Image.file(imageFile, fit: BoxFit.contain);
+  }
 
-  // Widget _buildNetworkLogoWithCache(String imageUrl, String companyName) {
-  //   _downloadAndCacheLogo(imageUrl, companyName);
-  //   return Container(
-  //     width: 70, // تصغير كبير في العرض
-  //     height: 30, // تصغير كبير في الارتفاع
-  //     decoration: BoxDecoration(
-  //       border: Border.all(color: Colors.grey.shade300, width: 1),
-  //       borderRadius: BorderRadius.circular(4),
-  //     ),
-  //     child: ClipRRect(
-  //       borderRadius: BorderRadius.circular(4),
-  //       child: CachedNetworkImage(
-  //         imageUrl: imageUrl,
-  //         fit: BoxFit.contain,
-  //         placeholder: (context, url) => _buildLogoPlaceholder(companyName),
-  //         errorWidget: (context, url, error) => _buildLogoPlaceholder(companyName),
-  //       ),
-  //     ),
-  //   );
-  // }
+  Widget _buildNetworkLogoWithCache(String imageUrl, String companyName) {
+    _downloadAndCacheLogo(imageUrl, companyName);
+    return CachedNetworkImage(
+      imageUrl: imageUrl,
+      fit: BoxFit.contain,
+      placeholder: (context, url) => _buildLogoPlaceholder(companyName),
+      errorWidget: (context, url, error) => _buildLogoPlaceholder(companyName),
+    );
+  }
+
+  Widget _buildLogoPlaceholder(String companyName) {
+    return Center(
+      child: Text(
+        companyName.split(' ').take(2).join(' '),
+        style: const TextStyle(fontSize: 12, color: Colors.black, fontWeight: FontWeight.bold),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
 
   Widget _buildInvoiceInfo() {
-    return Directionality(
-      textDirection: ui.TextDirection.rtl,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6), // تصغير البادنج
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade400, width: 1),
-          borderRadius: BorderRadius.circular(4),
-          color: Colors.grey[50],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Text(
-              'معلومات الفاتورة',
-              style: TextStyle(
-                fontSize: 12, // تصغير كبير في حجم الخط
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-              textDirection: TextDirection.rtl,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 4),
-            const Divider(height: 1, color: Colors.grey),
-            const SizedBox(height: 4),
-            _buildInfoRow('رقم الفاتورة', '${receiptModel.receiptCode ?? "N/A"}'),
-            _buildInfoRow('التاريخ', _formatDate(receiptModel.receiveDate ?? receiptModel.openDay)),
-            const SizedBox(height: 2),
-            _buildDualInfoRow(
-              label1: 'الكاشير',
-              value1: receiptModel.cashierName ?? 'N/A',
-              label2: 'المتخصص',
-              value2: receiptModel.specialistName ?? 'N/A',
-            ),
-            _buildInfoRow('العميل', _getClientName()),
-            if (receiptModel.clientPhone != null && receiptModel.clientPhone!.isNotEmpty)
-              _buildInfoRow('هاتف العميل', receiptModel.clientPhone!),
-            _buildDualInfoRow(
-              label1: 'الفرع',
-              value1: receiptModel.vendorBranchName ?? '',
-              label2: 'طريقة الدفع',
-              value2: receiptModel.paymethodName ?? 'نقدي',
-            ),
-            if (receiptModel.orderTypeName != null)
-              _buildInfoRow('نوع الطلب', receiptModel.orderTypeName!),
-          ],
-        ),
+    return Container(
+      padding: const EdgeInsets.all(5), // تعديل الحواف
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.black, width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        textDirection: ui.TextDirection.rtl, // اتجاه عربي للمعلومات
+        children: [
+          const Text(
+            'معلومات الفاتورة',
+            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          ),
+          const Divider(color: Colors.black, height: 1),
+          _buildInfoRow('رقم الفاتورة', '${receiptModel.receiptCode ?? "N/A"}'),
+          _buildInfoRow('التاريخ', _formatDate(receiptModel.receiveDate ?? receiptModel.openDay)),
+          _buildDualInfoRow(
+            label1: 'الكاشير', value1: receiptModel.cashierName ?? 'N/A',
+            label2: 'المتخصص', value2: receiptModel.specialistName ?? 'N/A',
+          ),
+          _buildInfoRow('العميل', _getClientName()),
+          if (receiptModel.clientPhone != null && receiptModel.clientPhone!.isNotEmpty)
+            _buildInfoRow('هاتف العميل', receiptModel.clientPhone!),
+          _buildDualInfoRow(
+            label1: 'الفرع', value1: receiptModel.vendorBranchName ?? '',
+            label2: 'طريقة الدفع', value2: receiptModel.paymethodName ?? 'نقدي',
+          ),
+          if (receiptModel.orderTypeName != null)
+            _buildInfoRow('نوع الطلب', receiptModel.orderTypeName!),
+        ],
       ),
     );
   }
 
   Widget _buildProductsTable() {
     final allProducts = receiptModel.orderDetails.values.expand((e) => e).toList();
-
-    if (allProducts.isEmpty) {
-      return const Center(
-        child: Text(
-          'لا توجد عناصر',
-          style: TextStyle(fontSize: 12, color: Colors.grey), // تصغير كبير في حجم الخط
-
-textDirection:TextDirection.rtl,
-        ),
-
-      );
-    }
+    if (allProducts.isEmpty) return const Center(child: Text('لا توجد عناصر', style: TextStyle(fontSize: 12)));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text(
-          'الخدمات',
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold), // تصغير كبير في حجم الخط
-          textAlign: TextAlign.center,
-          textDirection:TextDirection.rtl,
-        ),
+        const Text('الخدمات', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
         const SizedBox(height: 4),
-        // تحسين جدول الخدمات
         Container(
-          decoration: BoxDecoration(
-            color: Colors.grey[100],
-            border: Border.all(color: Colors.black, width: 1),
-          ),
+          decoration: BoxDecoration(border: Border.all(color: Colors.black, width: 1)),
           child: Row(
-            children: [
-              Expanded(
-                flex: 6, // زيادة المرونة للاسم
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
-                  decoration: const BoxDecoration(
-                    border: Border(left: BorderSide(color: Colors.black, width: 1)),
-                  ),
-                  child: const Text(
-                    'المنتج / الخدمة',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11),
-                    textAlign: TextAlign.center,
-                    textDirection:TextDirection.rtl,
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 2),
-                  decoration: const BoxDecoration(
-                    border: Border(left: BorderSide(color: Colors.black, width: 1)),
-                  ),
-                  child: const Text(
-                    'الكمية',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11),
-                    textAlign: TextAlign.center,
-                    textDirection:TextDirection.rtl,
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 3,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 2),
-                  decoration: const BoxDecoration(
-                    border: Border(left: BorderSide(color: Colors.black, width: 1)),
-                  ),
-                  child: const Text(
-                    'السعر',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11),
-                    textAlign: TextAlign.center,
-                    textDirection:TextDirection.rtl,
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 3,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 2),
-                  child: const Text(
-                    'الإجمالي',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11),
-                    textAlign: TextAlign.center,
-                    textDirection:TextDirection.rtl,
-                  ),
-                ),
-              ),
+            children: const [
+              Expanded(flex: 5, child: Center(child: Text('المنتج / الخدمة', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)))),
+              Expanded(flex: 2, child: Center(child: Text('الكمية', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)))),
+              Expanded(flex: 3, child: Center(child: Text('السعر', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)))),
+              Expanded(flex: 3, child: Center(child: Text('الإجمالي', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)))),
             ],
           ),
         ),
-        for (int i = 0; i < allProducts.length; i++)
-          Container(
-            decoration: BoxDecoration(
-              border: Border(
-                left: const BorderSide(color: Colors.black, width: 1),
-                right: const BorderSide(color: Colors.black, width: 1),
-                bottom: BorderSide(
-                  color: i == allProducts.length - 1 ? Colors.black : Colors.grey.shade400,
-                  width: i == allProducts.length - 1 ? 1 : 0.5,
-                ),
-              ),
-              color: i.isEven ? Colors.white : Colors.grey[50],
-            ),
-            child: _buildProductRow(allProducts[i]),
-          ),
+        for (final product in allProducts) _buildProductRow(product),
       ],
     );
   }
@@ -581,261 +263,51 @@ textDirection:TextDirection.rtl,
   Widget _buildProductRow(ProductItem product) {
     return Row(
       children: [
-        Expanded(
-          flex: 6, // زيادة المرونة للاسم
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-            decoration: const BoxDecoration(
-              border: Border(left: BorderSide(color: Colors.black, width: 1)),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  product.name,
-                  style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.right,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                if (product.hallName != null && product.hallName!.isNotEmpty)
-                  Text(
-                    'الصالة: ${product.hallName}',
-                    style: const TextStyle(fontSize: 9, color: Colors.grey),
-                    textAlign: TextAlign.right,
-                    textDirection:TextDirection.rtl,
-                    maxLines: 1,
-                  ),
-                if (product.reservationDate != null)
-                  Text(
-                    'موعد: ${_formatDate(product.reservationDate)}',
-                    style: const TextStyle(fontSize: 9, color: Colors.grey),
-                    textAlign: TextAlign.right,
-                    maxLines: 1,
-                  ),
-                if (product.reservationFee > 0)
-                  Text(
-                    'حجز: ${_formatCurrency(product.reservationFee)}',
-                    style: const TextStyle(fontSize: 9, color: Colors.grey),
-                    textAlign: TextAlign.right,
-                    textDirection:TextDirection.rtl,
-                    maxLines: 1,
-                  ),
-              ],
-            ),
-          ),
-        ),
-        Expanded(
-          flex: 2,
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
-            decoration: const BoxDecoration(
-              border: Border(left: BorderSide(color: Colors.black, width: 1)),
-            ),
-            child: Text(
-              '${product.quantity}',
-              style: const TextStyle(fontSize: 10),
-              textAlign: TextAlign.center,
-              textDirection:TextDirection.rtl,
-            ),
-          ),
-        ),
-        Expanded(
-          flex: 3,
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
-            decoration: const BoxDecoration(
-              border: Border(left: BorderSide(color: Colors.black, width: 1)),
-            ),
-            child: Text(
-              _formatCurrency(product.price),
-              style: const TextStyle(fontSize: 10),
-              textAlign: TextAlign.center,
-              textDirection:TextDirection.rtl,
-            ),
-          ),
-        ),
-        Expanded(
-          flex: 3,
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
-            child: Text(
-              _formatCurrency(product.total),
-              style: const TextStyle(fontSize: 10),
-              textAlign: TextAlign.center,
-              textDirection:TextDirection.rtl,
-            ),
-          ),
-        ),
+        Expanded(flex: 5, child: Text(product.name, style: const TextStyle(fontSize: 10))),
+        Expanded(flex: 2, child: Center(child: Text('${product.quantity}', style: const TextStyle(fontSize: 10)))),
+        Expanded(flex: 3, child: Center(child: Text(_formatCurrency(product.price), style: const TextStyle(fontSize: 10)))),
+        Expanded(flex: 3, child: Center(child: Text(_formatCurrency(product.total), style: const TextStyle(fontSize: 10)))),
       ],
     );
   }
 
   Widget _buildTotalsSection() {
-    return Container(
-      padding: const EdgeInsets.all(6), // تصغير البادنج
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade400),
-        borderRadius: BorderRadius.circular(4),
-        color: Colors.grey[50],
-      ),
+    return Directionality(
+      textDirection: ui.TextDirection.rtl,
       child: Column(
         children: [
           _buildTotalRow('المجموع', _formatCurrency(receiptModel.subtotal)),
-          if (receiptModel.discountPercent > 0)
-            _buildTotalRow('نسبة الخصم', '${receiptModel.discountPercent}%'),
-          if (receiptModel.discountTotal > 0)
-            _buildTotalRow('قيمة الخصم', _formatCurrency(receiptModel.discountTotal)),
-          if (receiptModel.deliveryFee > 0)
-            _buildTotalRow('رسوم التوصيل', _formatCurrency(receiptModel.deliveryFee)),
+          if (receiptModel.discountPercent > 0) _buildTotalRow('نسبة الخصم', '${receiptModel.discountPercent}%'),
+          if (receiptModel.discountTotal > 0) _buildTotalRow('قيمة الخصم', _formatCurrency(receiptModel.discountTotal)),
+          if (receiptModel.deliveryFee > 0) _buildTotalRow('رسوم التوصيل', _formatCurrency(receiptModel.deliveryFee)),
           _buildTotalRow('الضريبة', _formatCurrency(receiptModel.tax)),
-          const SizedBox(height: 4),
-          Container(
-            padding: const EdgeInsets.all(4), // تصغير البادنج
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(color: Colors.black, width: 1),
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: _buildTotalRow(
-              'المبلغ المستحق',
-              _formatCurrency(receiptModel.totalAfterDiscount),
-              isTotal: true,
-            ),
-          ),
-          const SizedBox(height: 4),
+          _buildTotalRow('المبلغ المستحق', _formatCurrency(receiptModel.totalAfterDiscount), isTotal: true),
           _buildTotalRow('طريقة الدفع', receiptModel.paymethodName ?? 'نقدي'),
-          if (receiptModel.cash > 0) _buildTotalRow('المبلغ النقدي', _formatCurrency(receiptModel.cash)),
-          if (receiptModel.card > 0) _buildTotalRow('المبلغ بالبطاقة', _formatCurrency(receiptModel.card)),
         ],
       ),
     );
   }
 
   Widget _buildQrCodeSection() {
-    if (receiptModel.qrCodeData == null || receiptModel.qrCodeData!.isEmpty) {
-      return const SizedBox();
-    }
-
-    return Container(
-      padding: const EdgeInsets.all(6), // تصغير البادنج
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Column(
-        children: [
-          const Text(
-            'رمز الاستعلام',
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold), // تصغير كبير في حجم الخط
-            textAlign: TextAlign.center,
-            textDirection:TextDirection.rtl,
-          ),
-          const SizedBox(height: 4),
-          QrImageView(
-            data: receiptModel.qrCodeData!,
-            version: QrVersions.auto,
-            size: 130.0, // تكبير حجم QR
-            foregroundColor: Colors.black,
-          ),
-          Text(
-            receiptModel.qrCodeData!,
-            style: const TextStyle(fontSize: 8, color: Colors.grey), // تصغير كبير في حجم الخط
-            textAlign: TextAlign.center,
-            textDirection:TextDirection.rtl,
-          ),
-        ],
+    if (receiptModel.qrCodeData == null || receiptModel.qrCodeData!.isEmpty) return const SizedBox();
+    return Center(
+      child: QrImageView(
+        data: receiptModel.qrCodeData!,
+        version: QrVersions.auto,
+        size: 100.0,
+        foregroundColor: Colors.black,
       ),
     );
   }
 
   Widget _buildFooter() {
     final companyData = _getCompanyData();
-
     return Column(
-      mainAxisSize: MainAxisSize.min,
       children: [
-        // معلومات الاتصال
-        Container(
-          padding: const EdgeInsets.all(4), // تصغير البادنج
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (companyData['phoneNumber'] != null)
-                Text(
-                  'هاتف: ${companyData['phoneNumber']}',
-                  style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold), // تصغير كبير في حجم الخط
-                  textAlign: TextAlign.center,
-                ),
-              const SizedBox(height: 2),
-              if (companyData['location'] != null)
-                Text(
-                  'العنوان: ${companyData['location']}',
-                  style: const TextStyle(fontSize: 9), // تصغير كبير في حجم الخط
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  textDirection:TextDirection.rtl,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              if (companyData['taxnumber'] != null) ...[
-                const SizedBox(height: 2),
-                Text(
-                  'الرقم الضريبي: ${companyData['taxnumber']}',
-                  style: const TextStyle(fontSize: 9, color: Colors.grey, fontWeight: FontWeight.bold), // تصغير كبير في حجم الخط
-                  textAlign: TextAlign.center,
-                  textDirection:TextDirection.rtl,
-                ),
-              ],
-            ],
-          ),
-        ),
-
+        if (companyData['phoneNumber'] != null) Text('هاتف: ${companyData['phoneNumber']}', style: const TextStyle(fontSize: 10)),
+        if (companyData['taxnumber'] != null) Text('الرقم الضريبي: ${companyData['taxnumber']}', style: const TextStyle(fontSize: 10)),
         const SizedBox(height: 4),
-
-        // رسالة شكر
-        Container(
-          padding: const EdgeInsets.all(4), // تصغير البادنج
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.green.shade300),
-            borderRadius: BorderRadius.circular(4),
-            color: Colors.green[50],
-          ),
-          child: const Column(
-            children: [
-              Text(
-                'شكراً لثقتكم بنا',
-                style: TextStyle(
-                  fontSize: 10, // تصغير كبير في حجم الخط
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green,
-                ),
-                textAlign: TextAlign.center,
-                textDirection:TextDirection.rtl,
-              ),
-              SizedBox(height: 1),
-              Text(
-                'نرحب بزيارتكم دائماً',
-                style: TextStyle(fontSize: 9, color: Colors.green), // تصغير كبير في حجم الخط
-                textAlign: TextAlign.center,
-                textDirection:TextDirection.rtl,
-              ),
-            ],
-          ),
-        ),
-
-        const SizedBox(height: 4),
-
-        // معلومات إضافية
-        Text(
-          'رقم السيريال: ${receiptModel.daySerialNumber}',
-          style: const TextStyle(fontSize: 9, color: Colors.grey, fontWeight: FontWeight.bold), // تصغير كبير في حجم الخط
-          textAlign: TextAlign.center,
-          textDirection:TextDirection.rtl,
-        ),
+        // تم حذف رقم السيريال
       ],
     );
   }
@@ -850,91 +322,24 @@ textDirection:TextDirection.rtl,
   Widget _buildInfoRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Directionality(
-        textDirection: ui.TextDirection.ltr,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              value,
-              style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w500), // تصغير كبير في حجم الخط
-              textDirection:TextDirection.rtl,
-            ),
-            Text(
-              label,
-              style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold), // تصغير كبير في حجم الخط
-              textDirection:TextDirection.rtl,
-            ),
-          ],
-        ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(value, style: const TextStyle(fontSize: 10)),
+          Text(label, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+        ],
       ),
     );
   }
 
-  Widget _buildDualInfoRow({
-    required String label1,
-    required String value1,
-    required String label2,
-    required String value2,
-  }) {
+  Widget _buildDualInfoRow({required String label1, required String value1, required String label2, required String value2}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Directionality(
-        textDirection: ui.TextDirection.rtl,
-        child: Row(
-          children: [
-            Expanded(
-              child: RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: '$label1: ',
-                      style: const TextStyle(
-                        fontSize: 9, // تصغير كبير في حجم الخط
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-
-                    ),
-                    TextSpan(
-                      text: value1,
-                      style: const TextStyle(
-                        fontSize: 9, // تصغير كبير في حجم الخط
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: '$label2: ',
-                      style: const TextStyle(
-                        fontSize: 9, // تصغير كبير في حجم الخط
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                    TextSpan(
-                      text: value2,
-                      style: const TextStyle(
-                        fontSize: 9, // تصغير كبير في حجم الخط
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
+      child: Row(
+        children: [
+          Expanded(child: Text('$label1: $value1', style: const TextStyle(fontSize: 10))),
+          Expanded(child: Text('$label2: $value2', style: const TextStyle(fontSize: 10))),
+        ],
       ),
     );
   }
@@ -942,40 +347,17 @@ textDirection:TextDirection.rtl,
   Widget _buildTotalRow(String label, String value, {bool isTotal = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Directionality(
-        textDirection: ui.TextDirection.ltr,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: isTotal ? 12 : 10, // تصغير كبير في حجم الخط
-                fontWeight: isTotal ? FontWeight.bold : FontWeight.w600,
-                color: isTotal ? Colors.black : Colors.grey[800],
-              ),
-              textDirection:TextDirection.rtl,
-            ),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: isTotal ? 12 : 10, // تصغير كبير في حجم الخط
-                fontWeight: isTotal ? FontWeight.bold : FontWeight.w600,
-                color: isTotal ? Colors.black : Colors.grey[800],
-              ),
-              textDirection:TextDirection.rtl,
-              textAlign: TextAlign.end,
-            ),
-          ],
-        ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(value, style: TextStyle(fontSize: isTotal ? 12 : 10, fontWeight: isTotal ? FontWeight.bold : FontWeight.normal)),
+          Text(label, style: TextStyle(fontSize: isTotal ? 12 : 10, fontWeight: isTotal ? FontWeight.bold : FontWeight.normal)),
+        ],
       ),
     );
   }
 
-  String _getClientName() {
-    final clientName = receiptModel.clientName;
-    return (clientName?.isEmpty == true) ? 'عميل' : (clientName ?? 'عميل');
-  }
+  String _getClientName() => (receiptModel.clientName?.isEmpty == true) ? 'عميل' : (receiptModel.clientName ?? 'عميل');
 
   String _formatDate(String? dateString) {
     if (dateString == null) return 'N/A';
@@ -987,9 +369,5 @@ textDirection:TextDirection.rtl,
     }
   }
 
-  String _formatCurrency(double amount) {
-    return '${amount.toStringAsFixed(2)} ر.س';
-  }
+  String _formatCurrency(double amount) => '${amount.toStringAsFixed(2)} ر.س';
 }
-*
-* */

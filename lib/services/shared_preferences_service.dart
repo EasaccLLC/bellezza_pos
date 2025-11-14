@@ -21,4 +21,12 @@ class SharedPreferencesService {
     return currentUrl != AppConfig.defaultBaseUrl && currentUrl.isNotEmpty;
   }
 
+  // لإدارة دخول الزائر
+  static bool getGuestSkipped() {
+    return _prefs.getBool('guestSkipped') ?? false;
+  }
+
+  static Future<void> setGuestSkipped(bool value) async {
+    await _prefs.setBool('guestSkipped', value);
+  }
 }

@@ -25,7 +25,8 @@ class ReceiptPrinter {
       await _printCashierReceipt(receiptModel, context);
 
       // 2. ثانياً: طباعة فواتير الخدمات لكل printerIp
-      // await _printServiceReceipts(receiptModel, context);
+      await _printServiceReceipts(receiptModel, context);
+
 
       print(" اكتملت عملية الطباعة بنجاح");
 
@@ -34,6 +35,52 @@ class ReceiptPrinter {
       rethrow;
     }
   }
+
+
+  static Future<void> _printServiceReceipts(
+      ReceiptModel receiptModel,
+      BuildContext context,
+      ) async {
+    try {
+      final orderDetails = receiptModel.orderDetails;
+
+      if (orderDetails.isEmpty) {
+        print("ℹ️ لا توجد خدمات للطباعة");
+        return;
+      }
+
+      print("🛠️ بدء طباعة ${orderDetails.length} فاتورة خدمة");
+
+      for (final entry in orderDetails.entries) {
+        final printerIp = entry.key;
+        final services = entry.value;
+
+        print("🖨️ طابعة الخدمة: $printerIp عدد الخدمات: ${services.length}");
+
+        for (final service in services) {
+          print("🛠️ بدء طباعة خدمة: ${service.name}");
+
+          final serviceWidget = ServiceReceiptWidget(
+            receiptModel: receiptModel,
+            printerIp: printerIp,
+            serviceItem: service,
+          );
+
+          await _printServiceDirectViaNetwork(printerIp, serviceWidget, context);
+
+          print("✅ تمت طباعة الخدمة: ${service.name} على $printerIp");
+        }
+      }
+
+      print("✅ اكتملت طباعة فواتير الخدمات");
+
+    } catch (e) {
+      print("❌ خطأ في طباعة فواتير الخدمات: $e");
+    }
+  }
+
+
+
 
   /// 💰 طباعة فاتورة الكاشير الرئيسية
   static Future<void> _printCashierReceipt(ReceiptModel receiptModel, BuildContext context) async {
@@ -59,64 +106,48 @@ class ReceiptPrinter {
     }
   }
 
-  /// 🔧 طباعة فواتير الخدمات
-  // static Future<void> _printServiceReceipts(ReceiptModel receiptModel, BuildContext context) async {
-  //   try {
-  //     final orderDetails = receiptModel.orderDetails;
-  //
-  //     if (orderDetails.isEmpty) {
-  //       print("ℹ️ لا توجد خدمات للطباعة");
-  //       return;
-  //     }
-  //
-  //     print("🛠️ بدء طباعة ${orderDetails.length} فاتورة خدمة");
-  //
-  //     // طباعة فاتورة خدمة لكل printerIp
-  //     for (final entry in orderDetails.entries) {
-  //       final printerIp = entry.key;
-  //       final services = entry.value;
-  //
-  //       print("🖨️ معالجة طابعة الخدمة: $printerIp بها ${services.length} خدمة");
-  //
-  //       // for (final service in services) {
-  //       //   await _printSingleServiceReceipt(receiptModel, printerIp, service, context);
-  //       // }
-  //     }
-  //
-  //     print("✅ اكتملت طباعة فواتير الخدمات");
-  //
-  //   } catch (e) {
-  //     print("❌ خطأ في طباعة فواتير الخدمات: $e");
-  //   }
-  // }
 
-  /// 🛠️ طباعة فاتورة خدمة واحدة
-  // static Future<void> _printSingleServiceReceipt(
-  //     ReceiptModel receiptModel,
-  //     String printerIp,
-  //     ProductItem service,
-  //     BuildContext context,
-  //     ) async {
-  //   try {
-  //     print("🛠️ بدء طباعة فاتورة الخدمة على: $printerIp - ${service.name}");
-  //
-  //     // إنشاء فاتورة الخدمة
-  //     // final serviceWidget = ServiceReceiptWidget(
-  //     //   receiptModel: receiptModel,
-  //     //   printerIp: printerIp,
-  //     //   serviceItem: service,
-  //     // );
-  //
-  //     // استخدام الطباعة المباشرة للخدمة
-  //     // await _printServiceDirectViaNetwork(printerIp, serviceWidget, context);
-  //
-  //     print("✅ تمت طباعة فاتورة الخدمة: ${service.name} على $printerIp");
-  //
-  //   } catch (e) {
-  //     print("❌ خطأ في طباعة فاتورة الخدمة $printerIp: $e");
-  //     print("🔍 تفاصيل الخطأ: ${e.toString()}");
-  //   }
-  // }
+  static Future<void> _printServiceDirectViaNetwork(
+      String printerIp,
+      Widget serviceWidget,
+      BuildContext context,
+      ) async {
+    try {
+      final port = 9100;
+
+      print("🌐 محاولة الطباعة المباشرة للخدمة على: $printerIp:$port");
+
+      // إنشاء bytes بنفس طريقة الفاتورة الرئيسية
+      final bytes = await _generateServiceReceiptBytes(serviceWidget, context);
+      print("📦 حجم بيانات الخدمة: ${bytes.length} bytes");
+
+      final networkPrinter = FlutterThermalPrinterNetwork(printerIp, port: port);
+
+      print("🔌 محاولة الاتصال بطابعة الخدمة...");
+      NetworkPrintResult con = await networkPrinter.connect();
+
+      if (con.value == 1) {
+        print("✅ تم الاتصال بطابعة الخدمة");
+      } else {
+        print("❌ فشل الاتصال بطابعة الخدمة");
+        return;
+      }
+
+      print("🖨️ بدء إرسال بيانات الخدمة...");
+      await networkPrinter.printTicket(bytes);
+      print("✅ تم إرسال بيانات الخدمة بنجاح");
+      await networkPrinter.printTicket([0x1D, 0x56, 0x00]);
+
+      print("🔌 قطع الاتصال...");
+      await networkPrinter.disconnect();
+      print("✅ تم قطع الاتصال");
+
+    } catch (e) {
+      print("❌ خطأ في الطباعة المباشرة للخدمة على $printerIp: $e");
+    }
+  }
+
+
 
   /// 🌐 الطباعة المباشرة عبر الشبكة للفاتورة الرئيسية
   static Future<void> _printDirectViaNetwork(
@@ -124,6 +155,7 @@ class ReceiptPrinter {
       Map<String, dynamic> data,
       BuildContext context,
       ) async {
+
     try {
       final port = 9100; // المنفذ الافتراضي للطابعات الحرارية
 
@@ -148,6 +180,7 @@ class ReceiptPrinter {
       print("🖨️ بدء إرسال البيانات للطباعة...");
       await networkPrinter.printTicket(bytes);
       print("✅ تم إرسال البيانات بنجاح");
+      await networkPrinter.printTicket([0x1D, 0x56, 0x00]);
 
       print("🔌 قطع الاتصال...");
       await networkPrinter.disconnect();
@@ -161,48 +194,35 @@ class ReceiptPrinter {
     }
   }
 
-  /// 🌐 الطباعة المباشرة عبر الشبكة للخدمات
-  // static Future<void> _printServiceDirectViaNetwork(
-  //     String printerIp,
-  //     ServiceReceiptWidget serviceWidget,
-  //     BuildContext context,
-  //     ) async {
-  //   try {
-  //     final port = 9100;
-  //
-  //     print("🌐 محاولة الطباعة المباشرة للخدمة على: $printerIp:$port");
-  //
-  //     // إنشاء bytes فاتورة الخدمة
-  //     final bytes = await _generateServiceReceiptBytes(serviceWidget, context);
-  //     print("📦 حجم بيانات الخدمة: ${bytes.length} bytes");
-  //
-  //     // استخدام FlutterThermalPrinterNetwork للطباعة المباشرة
-  //     final networkPrinter = FlutterThermalPrinterNetwork(printerIp, port: port);
-  //
-  //     print("🔌 محاولة الاتصال بطابعة الخدمة...");
-  //     NetworkPrintResult networkPrintResultConnection = await networkPrinter.connect();
-  //     if (networkPrintResultConnection.value == 1) {
-  //       print("✅ تم الاتصال بطابعة الخدمة");
-  //
-  //     }else{
-  //       print("فشل الاتصال");
-  //     }
-  //
-  //     print("🖨️ بدء إرسال بيانات الخدمة...");
-  //     await networkPrinter.printTicket(bytes);
-  //     print("✅ تم إرسال بيانات الخدمة بنجاح");
-  //
-  //     print("🔌 قطع الاتصال...");
-  //     await networkPrinter.disconnect();
-  //     print("✅ تم قطع الاتصال");
-  //
-  //   } catch (e) {
-  //     print("❌ خطأ في الطباعة المباشرة للخدمة على $printerIp: $e");
-  //     print("🔄 جارٍ تجربة الطريقة البديلة للخدمة...");
-  //   }
-  // }
+  static Future<List<int>> _generateServiceReceiptBytes(
+      Widget serviceWidget,
+      BuildContext context,
+      ) async {
+    try {
+      print("📸 جاري إنشاء صورة فاتورة الخدمة...");
 
+      final profile = await CapabilityProfile.load();
+      final generator = Generator(PaperSize.mm80, profile);
 
+      // نفس أسلوب الفاتورة الرئيسية: Screenshot → BMP → decode
+      List<int> finalBytes = [];
+      if (context.mounted) {
+        finalBytes = await screenShotWidget(
+          context,
+          generator: generator,
+          widget: serviceWidget,
+        );
+
+        print("📸 تم إنشاء صورة الفاتورة (Service) بحجم: ${finalBytes.length} bytes");
+        print("📦 الحجم النهائي لبيانات الخدمة: ${finalBytes.length} bytes");
+      }
+
+      return finalBytes;
+    } catch (e) {
+      print("❌ خطأ في _generateServiceReceiptBytes: $e");
+      rethrow;
+    }
+  }
 
   static Future<List<int>> _generateReceiptBytes(
       Map<String, dynamic> data,
@@ -237,34 +257,6 @@ class ReceiptPrinter {
         // finalBytes.addAll([0x0A, 0x0A, 0x0A]); // إضافة أسطر فارغة
         // finalBytes.addAll([0x1B, 0x69]); // أمر قطع الورق
       }
-
-      // if (context.mounted) {
-      //   await showDialog(
-      //       context: context,
-      //       builder: (BuildContext context) {
-      //         return Dialog(
-      //           shape: RoundedRectangleBorder(
-      //             borderRadius: BorderRadius.circular(8),
-      //           ),
-      //           child: Container(
-      //             width: MediaQuery.of(context).size.width * 0.7,
-      //             height: MediaQuery.of(context).size.height * 0.7,
-      //             decoration: BoxDecoration(
-      //               color: Colors.white,
-      //               borderRadius: BorderRadius.circular(8),
-      //             ),
-      //             child: SingleChildScrollView(
-      //               child: Image.memory(
-      //                 screenshotBytes,
-      //                 fit: BoxFit.contain,
-      //               ),
-      //             ),
-      //           ),
-      //         );
-      //       });
-      // }
-
-
 
       print("📦 الحجم النهائي للبيانات: ${finalBytes.length} bytes");
 
@@ -336,6 +328,9 @@ class ReceiptPrinter {
       bytes += raster;
     }
 
+    bytes.addAll(List.filled(6, 0x0A)); // feed lines
+    bytes.addAll([0x1D, 0x56, 0x00]);   // cut
+
     return Uint8List.fromList(bytes);
   }
 
@@ -357,33 +352,7 @@ class ReceiptPrinter {
     return img.copyResize(image, width: newWidth);
   }
 
-  // static Future<List<int>> _generateServiceReceiptBytes(
-  //     ServiceReceiptWidget serviceWidget,
-  //     BuildContext context,
-  //     ) async {
-  //   try {
-  //     print("📸 جاري إنشاء صورة فاتورة الخدمة...");
-  //
-  //     List<int> screenshotBytes = await FlutterThermalPrinter.instance.screenShotWidget(
-  //       context,
-  //       widget: serviceWidget,
-  //     );
-  //
-  //     print("📸 تم إنشاء صورة الخدمة بحجم: ${screenshotBytes.length} bytes");
-  //
-  //     List<int> finalBytes = [];
-  //     finalBytes.addAll(screenshotBytes);
-  //     finalBytes.addAll([0x0A, 0x0A, 0x0A]);
-  //     finalBytes.addAll([0x1B, 0x69]);
-  //
-  //     print("📦 الحجم النهائي لبيانات الخدمة: ${finalBytes.length} bytes");
-  //
-  //     return finalBytes;
-  //   } catch (e) {
-  //     print("❌ خطأ في _generateServiceReceiptBytes: $e");
-  //     rethrow;
-  //   }
-  // }
+
 
   static Widget buildScreenshot(BuildContext context, Widget receiptWidget) {
     // نمرر context الأصلي عشان نقدر نجيب locale

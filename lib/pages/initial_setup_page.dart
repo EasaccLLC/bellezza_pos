@@ -30,16 +30,17 @@ class _InitialSetupPageState extends State<InitialSetupPage> {
 
     final currentUrl = SharedPreferencesService.getBaseUrl();
     final bool isConfigured = SharedPreferencesService.isConfigured;
+    final bool guestSkipped = SharedPreferencesService.getGuestSkipped();
 
     if (mounted) {
       setState(() {
         _checkingConfig = false;
-        _showGuestOption = !isConfigured || currentUrl == AppConfig.defaultBaseUrl;
+        _showGuestOption = (!isConfigured || currentUrl == AppConfig.defaultBaseUrl) && !guestSkipped;
       });
     }
 
-    // الانتقال التلقائي إذا كان التطبيق مهيأ
-    if (isConfigured && currentUrl != AppConfig.defaultBaseUrl) {
+    // الانتقال التلقائي إذا كان التطبيق مهيأ أو دخل كزائر
+    if ((isConfigured && currentUrl != AppConfig.defaultBaseUrl) || guestSkipped) {
       await Future.delayed(const Duration(milliseconds: 500));
       if (mounted) {
         Navigator.pushReplacement(
@@ -71,7 +72,7 @@ class _InitialSetupPageState extends State<InitialSetupPage> {
                   Text('تم حفظ الإعدادات بنجاح'),
                 ],
               ),
-              backgroundColor: Colors.green,
+              backgroundColor: Colors.orange.shade700,
               duration: Duration(seconds: 1),
             ),
           );
@@ -91,8 +92,10 @@ class _InitialSetupPageState extends State<InitialSetupPage> {
     }
   }
 
-  void _enterAsGuest() {
-    // استخدام الإعدادات الافتراضية للدخول كزائر
+  void _enterAsGuest() async {
+    // حفظ علامة لتخطي الإعدادات في المستقبل
+    await SharedPreferencesService.setGuestSkipped(true);
+
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (_) => const MainWebViewPage()),
@@ -109,7 +112,7 @@ class _InitialSetupPageState extends State<InitialSetupPage> {
             Expanded(child: Text(message)),
           ],
         ),
-        backgroundColor: Colors.red,
+        backgroundColor: Colors.red.shade700,
         duration: Duration(seconds: 3),
       ),
     );
@@ -121,7 +124,7 @@ class _InitialSetupPageState extends State<InitialSetupPage> {
       builder: (context) => AlertDialog(
         title: Row(
           children: [
-            Icon(Icons.help_outline, color: Colors.blue),
+            Icon(Icons.help_outline, color: Colors.orange.shade700),
             SizedBox(width: 8),
             Text('معلومات الإعداد'),
           ],
@@ -182,7 +185,7 @@ class _InitialSetupPageState extends State<InitialSetupPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.blue.shade700),
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.orange.shade700),
                 strokeWidth: 3,
               ),
               const SizedBox(height: 24),
@@ -233,14 +236,14 @@ class _InitialSetupPageState extends State<InitialSetupPage> {
                         height: 80,
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [Colors.blue.shade600, Colors.blue.shade800],
+                            colors: [Colors.orange.shade600, Colors.orange.shade800],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ),
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.blue.withOpacity(0.3),
+                              color: Colors.orange.withOpacity(0.3),
                               blurRadius: 10,
                               spreadRadius: 2,
                             ),
@@ -258,7 +261,7 @@ class _InitialSetupPageState extends State<InitialSetupPage> {
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
-                          color: Colors.blue.shade800,
+                          color: Colors.orange.shade800,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -379,7 +382,7 @@ class _InitialSetupPageState extends State<InitialSetupPage> {
                                 width: double.infinity,
                                 height: 50,
                                 decoration: BoxDecoration(
-                                  color: Colors.blue.shade100,
+                                  color: Colors.orange.shade100,
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Center(
@@ -391,7 +394,7 @@ class _InitialSetupPageState extends State<InitialSetupPage> {
                                         height: 20,
                                         child: CircularProgressIndicator(
                                           strokeWidth: 2,
-                                          valueColor: AlwaysStoppedAnimation<Color>(Colors.blue.shade700),
+                                          valueColor: AlwaysStoppedAnimation<Color>(Colors.orange.shade700),
                                         ),
                                       ),
                                       const SizedBox(width: 12),
@@ -400,7 +403,7 @@ class _InitialSetupPageState extends State<InitialSetupPage> {
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.blue.shade700,
+                                          color: Colors.orange.shade700,
                                         ),
                                       ),
                                     ],
@@ -414,13 +417,13 @@ class _InitialSetupPageState extends State<InitialSetupPage> {
                                 child: ElevatedButton(
                                   onPressed: _saveBaseUrl,
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blue.shade700,
+                                    backgroundColor: Colors.orange.shade700,
                                     foregroundColor: Colors.white,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     elevation: 2,
-                                    shadowColor: Colors.blue.withOpacity(0.3),
+                                    shadowColor: Colors.orange.withOpacity(0.3),
                                   ),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -481,19 +484,19 @@ class _InitialSetupPageState extends State<InitialSetupPage> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              side: BorderSide(color: Colors.blue.shade400),
+                              side: BorderSide(color: Colors.orange.shade400),
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.person_outline, size: 20, color: Colors.blue.shade600),
+                                Icon(Icons.person_outline, size: 20, color: Colors.orange.shade600),
                                 const SizedBox(width: 8),
                                 Text(
                                   'الدخول كزائر',
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.blue.shade600,
+                                    color: Colors.orange.shade600,
                                   ),
                                 ),
                               ],
