@@ -19,37 +19,41 @@ class ReceiptWidget extends StatelessWidget {
     return Directionality(
       textDirection: ui.TextDirection.rtl,
       child: Container(
-        width: 250, // تعديل العرض
+        width: 200,
         child: Material(
           color: Colors.white,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5), // تعديل الحواف
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _buildHeaderWithLogo(),
-                const SizedBox(height: 6),
-                const Divider(thickness: 2, color: Colors.black),
-                _buildInvoiceInfo(),
-                const SizedBox(height: 6),
-                const Divider(thickness: 1, color: Colors.black),
-                _buildProductsTable(),
-                const SizedBox(height: 6),
-                const Divider(thickness: 2, color: Colors.black),
-                _buildTotalsSection(),
-                const SizedBox(height: 6),
-                _buildQrCodeSection(),
-                const SizedBox(height: 6),
-                const Divider(thickness: 2, color: Colors.black),
-                _buildFooter(),
-              ],
+            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+            child: Directionality(   // ضمان RTL لكل العناصر الداخلية
+              textDirection: ui.TextDirection.rtl,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildHeaderWithLogo(),
+                  const SizedBox(height: 6),
+                  const Divider(thickness: 2, color: Colors.black),
+                  _buildInvoiceInfo(),
+                  const SizedBox(height: 6),
+                  const Divider(thickness: 1, color: Colors.black),
+                  _buildProductsTable(),
+                  const SizedBox(height: 6),
+                  const Divider(thickness: 2, color: Colors.black),
+                  _buildTotalsSection(),
+                  const SizedBox(height: 6),
+                  _buildQrCodeSection(),
+                  const SizedBox(height: 6),
+                  const Divider(thickness: 2, color: Colors.black),
+                  _buildFooter(),
+                ],
+              ),
             ),
           ),
         ),
       ),
     );
   }
+
 
   Widget _buildHeaderWithLogo() {
     return Column(
